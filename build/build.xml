@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<project name="JSON Rhino" default="build" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+	<!--
+	A straightforward Ant build file that can build a distribution for single-component projects,
+	using Ivy to pull in dependencies.
+	
+	The distribution's directory structure is compatible with Sincerity containers.
+	See: http://threecrickets.com/sincerity/
+	
+	Version: 1.0
+	-->
+
+	<property file="component.properties" />
+	
+	<property name="component.source" value="../components/${component}/source" />
+	<property name="component.resources" value="../components/${component}/resources" />
+	<property name="component.notices" value="../components/notices" />
+	
+	<property name="dependencies" value="../dependencies" />
+
+	<property name="cache" value="./cache" />
+	<property name="cache.classes" value="${cache}/classes" />
+	<property name="cache.jars" value="${cache}/jars" />
+
+	<property name="distribution" value="./distribution" />
+	<property name="distribution.content" value="${distribution}/content" />
+	<property name="distribution.libraries" value="${distribution.content}/libraries" />
+	<property name="distribution.jars" value="${distribution.libraries}/jars" />
+	<property name="distribution.reference" value="${distribution.content}/reference" />
+	<property name="distribution.api" value="${distribution.reference}/documentation/api" />
+	<property name="distribution.source" value="${distribution.content}/reference/source" />
+
+	<taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${dependencies}/libraries/jars/org.apache.ivy/ivy/${ivy.version}/ivy.jar" />
+
+	<target name="ivy" description="Settings for Ivy">
+		<ivy:settings file="ivy/settings.xml" />
+	</target>
+
+	<target name="dependencies" depends="ivy" description="Resolve dependencies">
+		<ivy:resolve file="ivy/${component}.xml" type="jar" log="download-only" resolveId="${component}" />
+		<ivy:cachepath pathid="dependencies" type="jar" resolveId="${component}" />
+	</target>
+
+	<target name="classes" depends="dependencies" description="Compile Java code">
+		<mkdir dir="${cache.classes}" />
+		<javac srcdir="${component.source}" destdir="${cache.classes}" source="${jvm.version}" target="${jvm.version}" includeAntRuntime="false" debug="${compile.debug}">
+			<classpath refid="dependencies" />
+		</javac>
+	</target>
+
+	<target name="javadocs" description="Create API documentation if not present">
+		<available file="${distribution.api}" property="javadocs-present" />
+		<antcall target="javadocs-overwrite" />
+	</target>
+
+	<target name="javadocs-overwrite" depends="dependencies" description="Create API documentation" unless="javadocs-present">
+		<javadoc
+			destdir="${distribution.api}" sourcepath="${component.source}" excludepackagenames="**.internal.*"
+			access="protected" source="${jvm.version}"
+			windowtitle="${documentation.title} ${version}" doctitle="${documentation.title} ${version}"
+			author="true" splitindex="true" use="true" version="true" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false">
+			
+			<link href="${jvm.docs}" />
+			<link href="http://www.mozilla.org/rhino/apidocs/" />
+			<classpath refid="dependencies" />
+			<bottom>
+				<![CDATA[<i>${documentation.copyright}</i>]]>
+			</bottom>
+		</javadoc>
+	</target>
+	
+	<target name="libraries" depends="classes" description="Create jar">
+		<mkdir dir="${distribution.jars}" />
+		<jar destfile="${distribution.jars}/${maven.group}/${maven.artifact}/${version}/${maven.artifact}.jar" basedir="${cache.classes}" />
+	</target>
+
+	<target name="distribution" depends="libraries, javadocs" description="Assemble distribution">
+		<copy todir="${distribution.source}/${maven.group}/${maven.artifact}/${version}">
+			<fileset dir="${component.source}" excludes="**/.svn/" />
+		</copy>
+		<copy todir="${distribution.content}">
+			<fileset dir="${component.notices}" excludes="**/.svn/" />
+		</copy>
+	</target>
+	
+	<target name="package" depends="distribution" description="Create distribution package">
+		<zip destfile="${distribution}/${component}-${version}.zip">
+			<fileset dir="${distribution.content}" excludes="src/" />
+		</zip>
+	</target>
+	
+	<target name="build" depends="package" description="Build distribution" />
+	
+	<target name="clean" description="Clean">
+		<delete dir="${cache}" />
+		<delete dir="${distribution}" />
+	</target>
+	
+	<target name="rebuild" depends="clean, build" description="First clean and then build distribution" />
+	
+</project>

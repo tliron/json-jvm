@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+	<info
+		organisation="${maven.group}"
+		module="${maven.artifact}"
+		revision="${version}"
+		status="release"
+		default="true" />
+	<configurations>
+		<conf name="default" visibility="public" />
+	</configurations>
+	<dependencies>
+		<dependency org="org.mozilla" name="rhino" rev="1.7R3" transitive="false" />
+	</dependencies>
+</ivy-module>
