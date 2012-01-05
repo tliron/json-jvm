@@ -76,7 +76,7 @@ public class JSON
 	 * @return A JavaScript object or array
 	 * @throws JsonException
 	 */
-	public Object from( String json, boolean extendedJSON ) throws JsonException
+	public static Object from( String json, boolean extendedJSON ) throws JsonException
 	{
 		return getImplementation().from( json, extendedJSON );
 	}
@@ -101,7 +101,7 @@ public class JSON
 	 * @return The JSON string
 	 * @see #fromExtendedJSON(Object)
 	 */
-	public String to( Object object )
+	public static String to( Object object )
 	{
 		return getImplementation().to( object );
 	}
@@ -128,7 +128,7 @@ public class JSON
 	 * @return The JSON string
 	 * @see #fromExtendedJSON(Object)
 	 */
-	public String to( Object object, boolean indent )
+	public static String to( Object object, boolean indent )
 	{
 		return getImplementation().to( object, indent );
 	}
@@ -158,7 +158,7 @@ public class JSON
 	 * @return The JSON string
 	 * @see #fromExtendedJSON(Object)
 	 */
-	public String to( Object object, boolean indent, boolean javaScript )
+	public static String to( Object object, boolean indent, boolean javaScript )
 	{
 		return getImplementation().to( object, indent, javaScript );
 	}
@@ -178,7 +178,7 @@ public class JSON
 	 * @return The converted object or the original
 	 * @see JsonExtender#from(ScriptableObject, boolean)
 	 */
-	public Object fromExtendedJSON( Object object )
+	public static Object fromExtendedJSON( Object object )
 	{
 		return getImplementation().fromExtendedJSON( object );
 	}
