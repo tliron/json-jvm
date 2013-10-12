@@ -21,7 +21,7 @@ public interface JsonExtender
 	 * @param javaScript
 	 *        True to prefer conversion to Rhino native objects (Date, RegEx,
 	 *        etc.)
-	 * @return A BSON object, a java.util.Date, a JavaScript Date or null
+	 * @return A new object or null if not converted
 	 */
 	public Object from( ScriptableObject scriptable, boolean javaScript );
 
@@ -33,7 +33,7 @@ public interface JsonExtender
 	 * @param javaScript
 	 *        True to allow JavaScript literals (these will break JSON
 	 *        compatibility!)
-	 * @return A JavaScript object, a java.util.HashMap or null if not converted
+	 * @return A JavaScript value or null if not converted
 	 */
 	public Object to( Object object, boolean rhino, boolean javaScript );
 }

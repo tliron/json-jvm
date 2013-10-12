@@ -27,9 +27,8 @@ import com.threecrickets.rhino.util.JavaScriptUtil;
 import com.threecrickets.rhino.util.Literal;
 
 /**
- * Conversion between native Rhino objects and JSON, with support for <a
- * href="http://www.mongodb.org/display/DOCS/Mongo+Extended+JSON">MongoDB's
- * extended JSON format</a>.
+ * Conversion between native Rhino (JavaScript) objects and JSON, with support
+ * for a slightly extended format.
  * <p>
  * This class can be used directly in Rhino.
  * 
@@ -43,12 +42,12 @@ public class JsonImplementation
 
 	public JsonImplementation()
 	{
-		extendedJson = null;
+		jsonExtender = null;
 	}
 
 	public JsonImplementation( JsonExtender extendedJson )
 	{
-		this.extendedJson = extendedJson;
+		this.jsonExtender = extendedJson;
 	}
 
 	//
@@ -74,16 +73,11 @@ public class JsonImplementation
 	 * Recursively convert from JSON into native JavaScript values.
 	 * <p>
 	 * Creates JavaScript objects, arrays and primitives.
-	 * <p>
-	 * Can optionally recognize MongoDB's extended JSON: {$oid:'objectid'},
-	 * {$binary:'base64',$type:'hex'}, {$ref:'collection',$id:'objectid'},
-	 * {$date:timestamp}, {$regex:'pattern',$options:'options'} and
-	 * {$long:'integer'}, {$function:'source'}.
 	 * 
 	 * @param json
 	 *        The JSON string
 	 * @param extendedJSON
-	 *        Whether to convert extended JSON objects
+	 *        Whether to convert JSON objects
 	 * @return A JavaScript object or array
 	 * @throws JsonException
 	 */
@@ -97,19 +91,13 @@ public class JsonImplementation
 	}
 
 	/**
-	 * Recursively convert from native JavaScript, a few JVM types and BSON
-	 * types to extended JSON.
+	 * Recursively convert from native JavaScript and a few JVM types to JSON.
 	 * <p>
 	 * Recognizes JavaScript objects, arrays, Date objects, RegExp objects,
 	 * Function objects and primitives.
 	 * <p>
 	 * Recognizes JVM types: java.util.Map, java.util.Collection,
 	 * java.util.Date, java.util.regex.Pattern and java.lang.Long.
-	 * <p>
-	 * Recognizes BSON types: ObjectId, Binary and DBRef.
-	 * <p>
-	 * Note that java.lang.Long will be converted only if necessary in order to
-	 * preserve its value when converted to a JavaScript Number object.
 	 * 
 	 * @param object
 	 *        A native JavaScript object
@@ -122,19 +110,12 @@ public class JsonImplementation
 	}
 
 	/**
-	 * Recursively convert from native JavaScript, a few JVM types and BSON
-	 * types to extended JSON.
+	 * Recursively convert from native JavaScript and a few JVM types to JSON.
 	 * <p>
 	 * Recognizes JavaScript objects, arrays, Date objects, RegExp objects,
 	 * Function objects and primitives.
 	 * <p>
-	 * Recognizes JVM types: java.util.Map, java.util.Collection,
-	 * java.util.Date, java.util.regex.Pattern and java.lang.Long.
-	 * <p>
-	 * Recognizes BSON types: ObjectId, Binary and DBRef.
-	 * <p>
-	 * Note that java.lang.Long will be converted only if necessary in order to
-	 * preserve its value when converted to a JavaScript Number object.
+	 * Recognizes JVM types: java.util.Map, java.util.Collection.
 	 * 
 	 * @param object
 	 *        A native JavaScript object
@@ -149,19 +130,12 @@ public class JsonImplementation
 	}
 
 	/**
-	 * Recursively convert from native JavaScript, a few JVM types and BSON
-	 * types to extended JSON.
+	 * Recursively convert from native JavaScript and a few JVM types to JSON.
 	 * <p>
 	 * Recognizes JavaScript objects, arrays, Date objects, RegExp objects,
 	 * Function objects and primitives.
 	 * <p>
-	 * Recognizes JVM types: java.util.Map, java.util.Collection,
-	 * java.util.Date, java.util.regex.Pattern and java.lang.Long.
-	 * <p>
-	 * Recognizes BSON types: ObjectId, Binary and DBRef.
-	 * <p>
-	 * Note that java.lang.Long will be converted only if necessary in order to
-	 * preserve its value when converted to a JavaScript Number object.
+	 * Recognizes JVM types: java.util.Map, java.util.Collection.
 	 * 
 	 * @param object
 	 *        A native JavaScript object
@@ -181,14 +155,7 @@ public class JsonImplementation
 	}
 
 	/**
-	 * Recursively converts MongoDB's extended JSON to native JavaScript or
-	 * native BSON types.
-	 * <p>
-	 * Converts {$date:timestamp} objects to JavaScript Date objects and
-	 * {$regex:'pattern',$options:'options'} to JavaScript RegExp objects.
-	 * <p>
-	 * The following BSON types are supported: {$oid:'objectid'},
-	 * {$binary:'base64',$type:'hex'} and {$ref:'collection',$id:'objectid'}.
+	 * Recursively converts JSON to native JavaScript types.
 	 * 
 	 * @param object
 	 *        A native JavaScript object or array
@@ -214,9 +181,9 @@ public class JsonImplementation
 		{
 			ScriptableObject scriptable = (ScriptableObject) object;
 
-			if( extendedJson != null )
+			if( jsonExtender != null )
 			{
-				Object r = extendedJson.from( scriptable, true );
+				Object r = jsonExtender.from( scriptable, true );
 				if( r != null )
 					return r;
 			}
@@ -240,16 +207,16 @@ public class JsonImplementation
 	// //////////////////////////////////////////////////////////////////////////
 	// Private
 
-	private final JsonExtender extendedJson;
+	private final JsonExtender jsonExtender;
 
 	private void encode( StringBuilder s, Object object, boolean javaScript, boolean indent, int depth )
 	{
 		if( indent )
 			indent( s, depth );
 
-		if( extendedJson != null )
+		if( jsonExtender != null )
 		{
-			Object r = extendedJson.to( object, false, javaScript );
+			Object r = jsonExtender.to( object, false, javaScript );
 			if( r != null )
 			{
 				if( r instanceof Literal )
