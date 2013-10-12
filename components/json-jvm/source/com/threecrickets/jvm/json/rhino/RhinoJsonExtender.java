@@ -9,31 +9,31 @@
  * at http://threecrickets.com/
  */
 
-package com.threecrickets.rhino;
+package com.threecrickets.jvm.json.rhino;
 
 import org.mozilla.javascript.ScriptableObject;
 
-public interface JsonExtender
+public interface RhinoJsonExtender
 {
 	/**
 	 * @param scriptable
 	 *        The JavaScript object
-	 * @param javaScript
-	 *        True to prefer conversion to Rhino native objects (Date, RegEx,
+	 * @param rhino
+	 *        True to prefer conversion to Rhino native objects (Date, RegExp,
 	 *        etc.)
 	 * @return A new object or null if not converted
 	 */
-	public Object from( ScriptableObject scriptable, boolean javaScript );
+	public Object from( ScriptableObject scriptable, boolean rhino );
 
 	/**
 	 * @param object
+	 *        The object
 	 * @param rhino
 	 *        True to create Rhino native objects, otherwise a java.util.HashMap
 	 *        will be used
-	 * @param javaScript
-	 *        True to allow JavaScript literals (these will break JSON
-	 *        compatibility!)
+	 * @param allowCode
+	 *        True to allow language code (this will break JSON compatibility!)
 	 * @return A JavaScript value or null if not converted
 	 */
-	public Object to( Object object, boolean rhino, boolean javaScript );
+	public Object to( Object object, boolean rhino, boolean allowCode );
 }

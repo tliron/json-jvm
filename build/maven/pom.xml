@@ -3,19 +3,19 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.threecrickets.rhino</groupId>
-	<artifactId>json-rhino</artifactId>
+	<groupId>com.threecrickets.jvm.json</groupId>
+	<artifactId>json-jvm</artifactId>
 	<version>@VERSION@</version>
 	<packaging>pom</packaging>
 
-	<name>JSON Rhino</name>
-	<description>High-performance conversion to/from JSON for the Rhino JavaScript engine.</description>
-	<url>http://threecrickets.com/scripturian/</url>
+	<name>JSON JVM</name>
+	<description>High-performance conversion to/from JSON for the JVM language engines.</description>
+	<url>http://code.google.com/p/json-jvm/</url>
 	<inceptionYear>2009</inceptionYear>
 
 	<scm>
-		<connection>scm:git:https://code.google.com/p/json-rhino/</connection>
-		<url>http://code.google.com/p/json-rhino/source/browse/</url>
+		<connection>scm:git:https://code.google.com/p/json-jvm/</connection>
+		<url>http://code.google.com/p/json-jvm/source/browse/</url>
 	</scm>
 
 	<organization>

@@ -25,7 +25,7 @@
  * SOFTWARE.
  */
 
-package com.threecrickets.rhino.internal;
+package com.threecrickets.jvm.json;
 
 /**
  * The JsonException is thrown by the JSON.org classes when things are amiss.
@@ -35,13 +35,6 @@ package com.threecrickets.rhino.internal;
  */
 public class JsonException extends Exception
 {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 0;
-
-	private Throwable cause;
-
 	/**
 	 * Constructs a JsonException with an explanatory message.
 	 * 
@@ -53,15 +46,22 @@ public class JsonException extends Exception
 		super( message );
 	}
 
-	public JsonException( Throwable t )
+	public JsonException( Throwable cause )
 	{
-		super( t.getMessage() );
-		this.cause = t;
+		super( cause.getMessage() );
+		this.cause = cause;
 	}
 
 	@Override
 	public Throwable getCause()
 	{
-		return this.cause;
+		return cause;
 	}
+
+	// //////////////////////////////////////////////////////////////////////////
+	// Private
+
+	private static final long serialVersionUID = 0;
+
+	private Throwable cause;
 }

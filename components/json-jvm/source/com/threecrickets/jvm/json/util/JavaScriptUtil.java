@@ -9,7 +9,7 @@
  * at http://threecrickets.com/
  */
 
-package com.threecrickets.rhino.util;
+package com.threecrickets.jvm.json.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

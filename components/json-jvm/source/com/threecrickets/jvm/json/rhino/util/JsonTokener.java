@@ -25,7 +25,7 @@
  * SOFTWARE.
  */
 
-package com.threecrickets.rhino.internal;
+package com.threecrickets.jvm.json.rhino.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,13 +35,12 @@ import java.io.StringReader;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
-import com.threecrickets.rhino.util.NativeRhinoUtil;
+import com.threecrickets.jvm.json.JsonException;
 
 /**
  * A JsonTokener takes a source string and extracts characters and tokens from
  * it. It is used by the JSONObject and JSONArray constructors to parse JSON
  * source strings.
- * <p>
  */
 public class JsonTokener
 {
@@ -501,7 +500,7 @@ public class JsonTokener
 	 */
 	public Scriptable createNativeObject() throws JsonException
 	{
-		Scriptable nativeObject = NativeRhinoUtil.newObject();
+		Scriptable nativeObject = RhinoNativeUtil.newObject();
 		char c;
 		String key;
 
@@ -571,7 +570,7 @@ public class JsonTokener
 	 */
 	public Scriptable createNativeArray() throws JsonException
 	{
-		Scriptable nativeArray = NativeRhinoUtil.newArray( 0 );
+		Scriptable nativeArray = RhinoNativeUtil.newArray( 0 );
 		int arrayIndex = 0;
 		char c = nextClean();
 		char q;
@@ -665,7 +664,7 @@ public class JsonTokener
 	{
 		if( s.equals( "" ) )
 		{
-			return NativeRhinoUtil.to( s );
+			return RhinoNativeUtil.to( s );
 		}
 		if( s.equalsIgnoreCase( "true" ) )
 		{
@@ -703,7 +702,7 @@ public class JsonTokener
 					}
 					else
 					{
-						return NativeRhinoUtil.wrap( myLong );
+						return RhinoNativeUtil.wrap( myLong );
 					}
 				}
 				catch( Exception ignore )
@@ -725,7 +724,7 @@ public class JsonTokener
 					}
 					else
 					{
-						return NativeRhinoUtil.wrap( myLong );
+						return RhinoNativeUtil.wrap( myLong );
 					}
 				}
 			}
@@ -734,6 +733,6 @@ public class JsonTokener
 			}
 		}
 
-		return NativeRhinoUtil.to( s );
+		return RhinoNativeUtil.to( s );
 	}
 }

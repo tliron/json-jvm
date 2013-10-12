@@ -9,7 +9,7 @@
  * at http://threecrickets.com/
  */
 
-package com.threecrickets.rhino.util;
+package com.threecrickets.jvm.json.rhino.util;
 
 import java.util.Date;
 import java.util.regex.Pattern;
@@ -23,11 +23,11 @@ import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.regexp.NativeRegExp;
 
 /**
- * Conversion between native Rhino objects and JVM equivalents.
+ * Conversion between native Rhino values and JVM equivalents.
  * 
  * @author Tal Liron
  */
-public class NativeRhinoUtil
+public class RhinoNativeUtil
 {
 	//
 	// Static operations
@@ -64,7 +64,7 @@ public class NativeRhinoUtil
 		} );
 	}
 
-	public static Scriptable to( String source, String optionsString )
+	public static Scriptable toRegExp( String source, String optionsString )
 	{
 		Context context = Context.getCurrentContext();
 		Scriptable scope = ScriptRuntime.getTopCallScope( context );
@@ -87,7 +87,7 @@ public class NativeRhinoUtil
 		if( ( flags & Pattern.MULTILINE ) != 0 )
 			options += 'm';
 
-		return to( regex, options );
+		return toRegExp( regex, options );
 	}
 
 	public static Scriptable toNumber( Object value )
@@ -107,7 +107,7 @@ public class NativeRhinoUtil
 	{
 		Context context = Context.getCurrentContext();
 		Scriptable scope = ScriptRuntime.getTopCallScope( context );
-		return context.compileFunction( scope, value.toString(), NativeRhinoUtil.class.getCanonicalName(), 0, null );
+		return context.compileFunction( scope, value.toString(), RhinoNativeUtil.class.getCanonicalName(), 0, null );
 	}
 
 	public static Object from( Scriptable scriptable )

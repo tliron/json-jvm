@@ -9,78 +9,66 @@
  * at http://threecrickets.com/
  */
 
-package com.threecrickets.rhino;
+package com.threecrickets.jvm.json.rhino;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Pattern;
 
+import org.mozilla.javascript.ConsString;
+import org.mozilla.javascript.Function;
 import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.NativeJavaObject;
 import org.mozilla.javascript.ScriptRuntime;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.Undefined;
 
-import com.threecrickets.rhino.internal.JsonException;
-import com.threecrickets.rhino.internal.JsonTokener;
-import com.threecrickets.rhino.util.JavaScriptUtil;
-import com.threecrickets.rhino.util.Literal;
+import com.threecrickets.jvm.json.JsonException;
+import com.threecrickets.jvm.json.JsonImplementation;
+import com.threecrickets.jvm.json.rhino.util.JsonTokener;
+import com.threecrickets.jvm.json.util.JavaScriptUtil;
+import com.threecrickets.jvm.json.util.Literal;
 
 /**
- * Conversion between native Rhino (JavaScript) objects and JSON, with support
- * for a slightly extended format.
+ * Conversion between native Rhino values and JSON. Extensible using a
+ * {@link RhinoJsonExtender}.
  * <p>
- * This class can be used directly in Rhino.
+ * Recognizes Rhino's {@link NativeArray}, {@link NativeJavaObject},
+ * org.mozilla.javascript.NativeString, {@link ConsString}, {@link Undefined},
+ * {@link ScriptableObject} and {@link Function}.
+ * <p>
+ * Also recognizes JVM types: {@link Map}, {@link Collection}, {@link Date},
+ * {@link Pattern} and primitives.
  * 
  * @author Tal Liron
  */
-public class JsonImplementation
+public class RhinoJsonImplementation implements JsonImplementation
 {
 	//
 	// Construction
 	//
 
-	public JsonImplementation()
+	public RhinoJsonImplementation()
 	{
-		jsonExtender = null;
+		this( null );
 	}
 
-	public JsonImplementation( JsonExtender extendedJson )
+	public RhinoJsonImplementation( RhinoJsonExtender jsonExtender )
 	{
-		this.jsonExtender = extendedJson;
+		this.jsonExtender = jsonExtender;
 	}
 
 	//
-	// Operations
+	// JsonImplementation
 	//
 
-	/**
-	 * Recursively convert from JSON into native JavaScript values.
-	 * <p>
-	 * Creates JavaScript objects, arrays and primitives.
-	 * 
-	 * @param json
-	 *        The JSON string
-	 * @return A JavaScript object or array
-	 * @throws JsonException
-	 */
 	public Object from( String json ) throws JsonException
 	{
 		return from( json, false );
 	}
 
-	/**
-	 * Recursively convert from JSON into native JavaScript values.
-	 * <p>
-	 * Creates JavaScript objects, arrays and primitives.
-	 * 
-	 * @param json
-	 *        The JSON string
-	 * @param extendedJSON
-	 *        Whether to convert JSON objects
-	 * @return A JavaScript object or array
-	 * @throws JsonException
-	 */
 	public Object from( String json, boolean extendedJSON ) throws JsonException
 	{
 		JsonTokener tokener = new JsonTokener( json );
@@ -90,63 +78,16 @@ public class JsonImplementation
 		return object;
 	}
 
-	/**
-	 * Recursively convert from native JavaScript and a few JVM types to JSON.
-	 * <p>
-	 * Recognizes JavaScript objects, arrays, Date objects, RegExp objects,
-	 * Function objects and primitives.
-	 * <p>
-	 * Recognizes JVM types: java.util.Map, java.util.Collection,
-	 * java.util.Date, java.util.regex.Pattern and java.lang.Long.
-	 * 
-	 * @param object
-	 *        A native JavaScript object
-	 * @return The JSON string
-	 * @see #fromExtendedJSON(Object)
-	 */
 	public String to( Object object )
 	{
 		return to( object, false, false );
 	}
 
-	/**
-	 * Recursively convert from native JavaScript and a few JVM types to JSON.
-	 * <p>
-	 * Recognizes JavaScript objects, arrays, Date objects, RegExp objects,
-	 * Function objects and primitives.
-	 * <p>
-	 * Recognizes JVM types: java.util.Map, java.util.Collection.
-	 * 
-	 * @param object
-	 *        A native JavaScript object
-	 * @param indent
-	 *        Whether to indent the JSON for human readability
-	 * @return The JSON string
-	 * @see #fromExtendedJSON(Object)
-	 */
 	public String to( Object object, boolean indent )
 	{
 		return to( object, indent, false );
 	}
 
-	/**
-	 * Recursively convert from native JavaScript and a few JVM types to JSON.
-	 * <p>
-	 * Recognizes JavaScript objects, arrays, Date objects, RegExp objects,
-	 * Function objects and primitives.
-	 * <p>
-	 * Recognizes JVM types: java.util.Map, java.util.Collection.
-	 * 
-	 * @param object
-	 *        A native JavaScript object
-	 * @param indent
-	 *        Whether to indent the JSON for human readability
-	 * @param javaScript
-	 *        True to allow JavaScript literals (these will break JSON
-	 *        compatibility!)
-	 * @return The JSON string
-	 * @see #fromExtendedJSON(Object)
-	 */
 	public String to( Object object, boolean indent, boolean javaScript )
 	{
 		StringBuilder s = new StringBuilder();
@@ -154,16 +95,11 @@ public class JsonImplementation
 		return s.toString();
 	}
 
-	/**
-	 * Recursively converts JSON to native JavaScript types.
-	 * 
-	 * @param object
-	 *        A native JavaScript object or array
-	 * @return The converted object or the original
-	 * @see JsonExtender#from(ScriptableObject, boolean)
-	 */
 	public Object fromExtendedJSON( Object object )
 	{
+		if( jsonExtender == null )
+			return object;
+
 		if( object instanceof NativeArray )
 		{
 			NativeArray array = (NativeArray) object;
@@ -181,12 +117,9 @@ public class JsonImplementation
 		{
 			ScriptableObject scriptable = (ScriptableObject) object;
 
-			if( jsonExtender != null )
-			{
-				Object r = jsonExtender.from( scriptable, true );
-				if( r != null )
-					return r;
-			}
+			Object r = jsonExtender.from( scriptable, true );
+			if( r != null )
+				return r;
 
 			// Convert regular Rhino object
 
@@ -207,7 +140,7 @@ public class JsonImplementation
 	// //////////////////////////////////////////////////////////////////////////
 	// Private
 
-	private final JsonExtender jsonExtender;
+	private final RhinoJsonExtender jsonExtender;
 
 	private void encode( StringBuilder s, Object object, boolean javaScript, boolean indent, int depth )
 	{
@@ -253,7 +186,7 @@ public class JsonImplementation
 			String className = scriptable.getClassName();
 			if( className.equals( "String" ) )
 			{
-				// Unpack NativeString
+				// Unpack NativeString (private class) or ConsString
 
 				s.append( '\"' );
 				s.append( JavaScriptUtil.escape( object.toString() ) );

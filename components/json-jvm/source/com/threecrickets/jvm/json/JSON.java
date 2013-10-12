@@ -9,16 +9,19 @@
  * at http://threecrickets.com/
  */
 
-package com.threecrickets.rhino;
+package com.threecrickets.jvm.json;
 
-import org.mozilla.javascript.ScriptableObject;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Map;
+import java.util.regex.Pattern;
 
-import com.threecrickets.rhino.internal.JsonException;
+import com.threecrickets.jvm.json.rhino.RhinoJsonImplementation;
 
 /**
- * Conversion between native Rhino (JavaScript) objects and JSON.
+ * Conversion between native JVM language objects and JSON.
  * <p>
- * This class can be used directly in Rhino.
+ * This class can be used directly in JVM languages.
  * 
  * @author Tal Liron
  */
@@ -43,13 +46,13 @@ public class JSON
 	//
 
 	/**
-	 * Recursively convert from JSON into native JavaScript values.
+	 * Recursively convert from JSON into native values.
 	 * <p>
-	 * Creates JavaScript objects, arrays and primitives.
+	 * Creates native dicts, arrays and primitives.
 	 * 
 	 * @param json
 	 *        The JSON string
-	 * @return A JavaScript object or array
+	 * @return A native object or array
 	 * @throws JsonException
 	 */
 	public static Object from( String json ) throws JsonException
@@ -58,15 +61,15 @@ public class JSON
 	}
 
 	/**
-	 * Recursively convert from JSON into native JavaScript values.
+	 * Recursively convert from JSON into native values.
 	 * <p>
-	 * Creates JavaScript objects, arrays and primitives.
+	 * Creates native dicts, arrays and primitives.
 	 * 
 	 * @param json
 	 *        The JSON string
 	 * @param extendedJSON
 	 *        Whether to convert extended JSON objects
-	 * @return A JavaScript object or array
+	 * @return A native object or array
 	 * @throws JsonException
 	 */
 	public static Object from( String json, boolean extendedJSON ) throws JsonException
@@ -75,10 +78,13 @@ public class JSON
 	}
 
 	/**
-	 * Recursively convert from native JavaScript to JSON.
+	 * Recursively convert from native values to JSON.
+	 * <p>
+	 * Also recognizes JVM types: {@link Map}, {@link Collection}, {@link Date},
+	 * {@link Pattern} and primitives.
 	 * 
 	 * @param object
-	 *        A native JavaScript object
+	 *        A native object or array
 	 * @return The JSON string
 	 * @see #fromExtendedJSON(Object)
 	 */
@@ -88,14 +94,16 @@ public class JSON
 	}
 
 	/**
-	 * Recursively convert from native JavaScript to JSON.
+	 * Recursively convert from native values to JSON.
+	 * <p>
+	 * Also recognizes JVM types: {@link Map}, {@link Collection}, {@link Date},
+	 * {@link Pattern} and primitives.
 	 * 
 	 * @param object
-	 *        A native JavaScript object
+	 *        A native object or array
 	 * @param indent
 	 *        Whether to indent the JSON for human readability
 	 * @return The JSON string
-	 * @see #fromExtendedJSON(Object)
 	 */
 	public static String to( Object object, boolean indent )
 	{
@@ -103,30 +111,30 @@ public class JSON
 	}
 
 	/**
-	 * Recursively convert from native JavaScript to JSON.
+	 * Recursively convert from native values to JSON.
+	 * <p>
+	 * Also recognizes JVM types: {@link Map}, {@link Collection}, {@link Date},
+	 * {@link Pattern} and primitives.
 	 * 
 	 * @param object
-	 *        A native JavaScript object
+	 *        A native object or array
 	 * @param indent
 	 *        Whether to indent the JSON for human readability
-	 * @param javaScript
-	 *        True to allow JavaScript literals (these will break JSON
-	 *        compatibility!)
+	 * @param allowCode
+	 *        True to allow language code (this will break JSON compatibility!)
 	 * @return The JSON string
-	 * @see #fromExtendedJSON(Object)
 	 */
-	public static String to( Object object, boolean indent, boolean javaScript )
+	public static String to( Object object, boolean indent, boolean allowCode )
 	{
-		return getImplementation().to( object, indent, javaScript );
+		return getImplementation().to( object, indent, allowCode );
 	}
 
 	/**
-	 * Recursively converts extended JSON to native JavaScript types.
+	 * Recursively converts extended JSON to native values.
 	 * 
 	 * @param object
-	 *        A native JavaScript object or array
+	 *        A native object or array
 	 * @return The converted object or the original
-	 * @see JsonExtender#from(ScriptableObject, boolean)
 	 */
 	public static Object fromExtendedJSON( Object object )
 	{
@@ -136,5 +144,5 @@ public class JSON
 	// //////////////////////////////////////////////////////////////////////////
 	// Private
 
-	private static volatile JsonImplementation implementation = new JsonImplementation();
+	private static volatile JsonImplementation implementation = new RhinoJsonImplementation();
 }
