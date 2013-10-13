@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
+import jdk.nashorn.internal.objects.NativeArray;
 import jdk.nashorn.internal.runtime.ScriptObject;
 
 import com.threecrickets.jvm.json.JsonException;
@@ -499,7 +500,7 @@ public class JsonTokener
 	 */
 	public ScriptObject createNativeObject() throws JsonException
 	{
-		ScriptObject nativeObject = NashornNativeUtil.newObject();
+		ScriptObject scriptObject = NashornNativeUtil.newObject();
 		char c;
 		String key;
 
@@ -515,7 +516,7 @@ public class JsonTokener
 				case 0:
 					throw syntaxError( "A JSON object text must end with '}'" );
 				case '}':
-					return nativeObject;
+					return scriptObject;
 				default:
 					back();
 					key = nextValue().toString();
@@ -537,7 +538,7 @@ public class JsonTokener
 			{
 				throw syntaxError( "Expected a ':' after a key" );
 			}
-			nativeObject.put( key, nextValue(), true );
+			scriptObject.put( key, nextValue(), true );
 
 			/*
 			 * Pairs are separated by ','. We will also tolerate ';'.
@@ -549,12 +550,12 @@ public class JsonTokener
 				case ',':
 					if( nextClean() == '}' )
 					{
-						return nativeObject;
+						return scriptObject;
 					}
 					back();
 					break;
 				case '}':
-					return nativeObject;
+					return scriptObject;
 				default:
 					throw syntaxError( "Expected a ',' or '}'" );
 			}
@@ -569,7 +570,7 @@ public class JsonTokener
 	 */
 	public ScriptObject createNativeArray() throws JsonException
 	{
-		ScriptObject nativeArray = NashornNativeUtil.newArray( 0 );
+		NativeArray nativeArray = NashornNativeUtil.newArray( 0 );
 		int arrayIndex = 0;
 		char c = nextClean();
 		char q;

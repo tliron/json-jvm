@@ -134,13 +134,13 @@ public class RhinoNativeUtil
 		return null;
 	}
 
-	public static String[] from( NativeRegExp regExp )
+	public static String[] from( NativeRegExp nativeRegExp )
 	{
-		Object source = ScriptableObject.getProperty( regExp, "source" );
+		Object source = ScriptableObject.getProperty( nativeRegExp, "source" );
 
-		Object isGlobal = ScriptableObject.getProperty( regExp, "global" );
-		Object isIgnoreCase = ScriptableObject.getProperty( regExp, "ignoreCase" );
-		Object isMultiLine = ScriptableObject.getProperty( regExp, "multiline" );
+		Object isGlobal = ScriptableObject.getProperty( nativeRegExp, "global" );
+		Object isIgnoreCase = ScriptableObject.getProperty( nativeRegExp, "ignoreCase" );
+		Object isMultiLine = ScriptableObject.getProperty( nativeRegExp, "multiline" );
 
 		// Note: JVM pattern does not support a "g" flag. Also, compiling
 		// the pattern here is a waste of time.
@@ -182,7 +182,7 @@ public class RhinoNativeUtil
 		return context.newArray( scope, length );
 	}
 
-	public static Scriptable wrap( Object value )
+	public static NativeJavaObject wrap( Object value )
 	{
 		Context context = Context.getCurrentContext();
 		Scriptable scope = ScriptRuntime.getTopCallScope( context );

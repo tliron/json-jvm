@@ -500,7 +500,7 @@ public class JsonTokener
 	 */
 	public Scriptable createNativeObject() throws JsonException
 	{
-		Scriptable nativeObject = RhinoNativeUtil.newObject();
+		Scriptable scriptable = RhinoNativeUtil.newObject();
 		char c;
 		String key;
 
@@ -516,7 +516,7 @@ public class JsonTokener
 				case 0:
 					throw syntaxError( "A JSON object text must end with '}'" );
 				case '}':
-					return nativeObject;
+					return scriptable;
 				default:
 					back();
 					key = nextValue().toString();
@@ -538,7 +538,7 @@ public class JsonTokener
 			{
 				throw syntaxError( "Expected a ':' after a key" );
 			}
-			ScriptableObject.putProperty( nativeObject, key, nextValue() );
+			ScriptableObject.putProperty( scriptable, key, nextValue() );
 
 			/*
 			 * Pairs are separated by ','. We will also tolerate ';'.
@@ -550,12 +550,12 @@ public class JsonTokener
 				case ',':
 					if( nextClean() == '}' )
 					{
-						return nativeObject;
+						return scriptable;
 					}
 					back();
 					break;
 				case '}':
-					return nativeObject;
+					return scriptable;
 				default:
 					throw syntaxError( "Expected a ',' or '}'" );
 			}

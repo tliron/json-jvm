@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.threecrickets.jvm.json</groupId>
+	<groupId>com.threecrickets.jvm</groupId>
 	<artifactId>json-jvm</artifactId>
 	<version>@VERSION@</version>
 	<packaging>pom</packaging>

@@ -88,10 +88,10 @@ public class RhinoJsonImplementation implements JsonImplementation
 		return to( object, indent, false );
 	}
 
-	public String to( Object object, boolean indent, boolean javaScript )
+	public String to( Object object, boolean indent, boolean allowCode )
 	{
 		StringBuilder s = new StringBuilder();
-		encode( s, object, javaScript, indent, indent ? 0 : -1 );
+		encode( s, object, allowCode, indent, indent ? 0 : -1 );
 		return s.toString();
 	}
 
@@ -102,35 +102,35 @@ public class RhinoJsonImplementation implements JsonImplementation
 
 		if( object instanceof NativeArray )
 		{
-			NativeArray array = (NativeArray) object;
-			int length = (int) array.getLength();
+			NativeArray nativeArray = (NativeArray) object;
+			int length = (int) nativeArray.getLength();
 
 			for( int i = 0; i < length; i++ )
 			{
-				Object value = ScriptableObject.getProperty( array, i );
+				Object value = ScriptableObject.getProperty( nativeArray, i );
 				Object converted = fromExtendedJSON( value );
 				if( converted != value )
-					ScriptableObject.putProperty( array, i, converted );
+					ScriptableObject.putProperty( nativeArray, i, converted );
 			}
 		}
 		else if( object instanceof ScriptableObject )
 		{
-			ScriptableObject scriptable = (ScriptableObject) object;
+			ScriptableObject scriptableObject = (ScriptableObject) object;
 
-			Object r = jsonExtender.from( scriptable, true );
+			Object r = jsonExtender.from( scriptableObject, true );
 			if( r != null )
 				return r;
 
 			// Convert regular Rhino object
 
-			Object[] ids = scriptable.getAllIds();
+			Object[] ids = scriptableObject.getAllIds();
 			for( Object id : ids )
 			{
 				String key = id.toString();
-				Object value = ScriptableObject.getProperty( scriptable, key );
+				Object value = ScriptableObject.getProperty( scriptableObject, key );
 				Object converted = fromExtendedJSON( value );
 				if( converted != value )
-					ScriptableObject.putProperty( scriptable, key, converted );
+					ScriptableObject.putProperty( scriptableObject, key, converted );
 			}
 		}
 
@@ -142,20 +142,20 @@ public class RhinoJsonImplementation implements JsonImplementation
 
 	private final RhinoJsonExtender jsonExtender;
 
-	private void encode( StringBuilder s, Object object, boolean javaScript, boolean indent, int depth )
+	private void encode( StringBuilder s, Object object, boolean allowCode, boolean indent, int depth )
 	{
 		if( indent )
 			indent( s, depth );
 
 		if( jsonExtender != null )
 		{
-			Object r = jsonExtender.to( object, false, javaScript );
+			Object r = jsonExtender.to( object, false, allowCode );
 			if( r != null )
 			{
 				if( r instanceof Literal )
 					s.append( ( (Literal) r ).toString( depth ) );
 				else
-					encode( s, r, indent, javaScript, depth );
+					encode( s, r, indent, allowCode, depth );
 				return;
 			}
 		}
@@ -172,24 +172,24 @@ public class RhinoJsonImplementation implements JsonImplementation
 			// Java object, or because it was returned from a Java call and
 			// wrapped by Rhino.
 
-			encode( s, ( (NativeJavaObject) object ).unwrap(), javaScript, false, depth );
+			encode( s, ( (NativeJavaObject) object ).unwrap(), allowCode, false, depth );
 		}
 		else if( object instanceof Collection )
-			encodeCollection( s, (Collection<?>) object, javaScript, depth );
+			encodeCollection( s, (Collection<?>) object, allowCode, depth );
 		else if( object instanceof Map )
-			encodeMap( s, (Map<?, ?>) object, javaScript, depth );
+			encodeMap( s, (Map<?, ?>) object, allowCode, depth );
 		else if( object instanceof NativeArray )
-			encodeNativeArray( s, (NativeArray) object, javaScript, depth );
+			encodeNativeArray( s, (NativeArray) object, allowCode, depth );
 		else if( object instanceof ScriptableObject )
 		{
-			ScriptableObject scriptable = (ScriptableObject) object;
-			String className = scriptable.getClassName();
+			ScriptableObject scriptableObject = (ScriptableObject) object;
+			String className = scriptableObject.getClassName();
 			if( className.equals( "String" ) )
 			{
 				// Unpack NativeString (private class) or ConsString
 
 				s.append( '\"' );
-				s.append( JavaScriptUtil.escape( object.toString() ) );
+				s.append( JavaScriptUtil.escape( scriptableObject.toString() ) );
 				s.append( '\"' );
 			}
 			else if( className.equals( "Function" ) )
@@ -197,11 +197,11 @@ public class RhinoJsonImplementation implements JsonImplementation
 				// Trying to encode functions can result in stack overflows...
 
 				s.append( '\"' );
-				s.append( JavaScriptUtil.escape( object.toString() ) );
+				s.append( JavaScriptUtil.escape( scriptableObject.toString() ) );
 				s.append( '\"' );
 			}
 			else
-				encodeScriptableObject( s, scriptable, javaScript, depth );
+				encodeScriptableObject( s, scriptableObject, allowCode, depth );
 		}
 		else
 		{
@@ -295,11 +295,11 @@ public class RhinoJsonImplementation implements JsonImplementation
 		s.append( '}' );
 	}
 
-	private void encodeNativeArray( StringBuilder s, NativeArray array, boolean javaScript, int depth )
+	private void encodeNativeArray( StringBuilder s, NativeArray nativeArray, boolean javaScript, int depth )
 	{
 		s.append( '[' );
 
-		long length = array.getLength();
+		long length = nativeArray.getLength();
 		if( length > 0 )
 		{
 			if( depth > -1 )
@@ -307,7 +307,7 @@ public class RhinoJsonImplementation implements JsonImplementation
 
 			for( int i = 0; i < length; i++ )
 			{
-				Object value = ScriptableObject.getProperty( array, i );
+				Object value = ScriptableObject.getProperty( nativeArray, i );
 
 				encode( s, value, javaScript, true, depth > -1 ? depth + 1 : -1 );
 
@@ -329,11 +329,11 @@ public class RhinoJsonImplementation implements JsonImplementation
 		s.append( ']' );
 	}
 
-	private void encodeScriptableObject( StringBuilder s, ScriptableObject object, boolean javaScript, int depth )
+	private void encodeScriptableObject( StringBuilder s, ScriptableObject scriptableObject, boolean javaScript, int depth )
 	{
 		s.append( '{' );
 
-		Object[] ids = object.getAllIds();
+		Object[] ids = scriptableObject.getAllIds();
 		int length = ids.length;
 		if( length > 0 )
 		{
@@ -343,7 +343,7 @@ public class RhinoJsonImplementation implements JsonImplementation
 			for( int i = 0; i < length; i++ )
 			{
 				String key = ids[i].toString();
-				Object value = ScriptableObject.getProperty( object, key );
+				Object value = ScriptableObject.getProperty( scriptableObject, key );
 
 				if( depth > -1 )
 					indent( s, depth + 1 );

@@ -22,7 +22,6 @@ import jdk.nashorn.internal.objects.NativeString;
 import jdk.nashorn.internal.objects.annotations.Function;
 import jdk.nashorn.internal.runtime.ConsString;
 import jdk.nashorn.internal.runtime.NumberToString;
-import jdk.nashorn.internal.runtime.Property;
 import jdk.nashorn.internal.runtime.ScriptFunction;
 import jdk.nashorn.internal.runtime.ScriptObject;
 import jdk.nashorn.internal.runtime.Undefined;
@@ -60,6 +59,9 @@ public class NashornJsonImplementation implements JsonImplementation
 
 	public NashornJsonImplementation( NashornJsonExtender jsonExtender )
 	{
+		// Force a NoClassDefFoundError if Nashorn is not available
+		ScriptObject.class.getClass();
+
 		this.jsonExtender = jsonExtender;
 	}
 
@@ -91,10 +93,10 @@ public class NashornJsonImplementation implements JsonImplementation
 		return to( object, indent, false );
 	}
 
-	public String to( Object object, boolean indent, boolean javaScript )
+	public String to( Object object, boolean indent, boolean allowCode )
 	{
 		StringBuilder s = new StringBuilder();
-		encode( s, object, javaScript, indent, indent ? 0 : -1 );
+		encode( s, object, allowCode, indent, indent ? 0 : -1 );
 		return s.toString();
 	}
 
@@ -105,34 +107,33 @@ public class NashornJsonImplementation implements JsonImplementation
 
 		if( object instanceof NativeArray )
 		{
-			ArrayData array = ( (NativeArray) object ).getArray();
-			int length = (int) array.length();
+			ArrayData arrayData = ( (NativeArray) object ).getArray();
+			int length = (int) arrayData.length();
 
 			for( int i = 0; i < length; i++ )
 			{
-				Object value = array.getObject( i );
+				Object value = arrayData.getObject( i );
 				Object converted = fromExtendedJSON( value );
 				if( converted != value )
-					array.set( i, converted, false );
+					arrayData.set( i, converted, false );
 			}
 		}
 		else if( object instanceof ScriptObject )
 		{
-			ScriptObject script = (ScriptObject) object;
+			ScriptObject scriptObject = (ScriptObject) object;
 
-			Object r = jsonExtender.from( script, true );
+			Object r = jsonExtender.from( scriptObject, true );
 			if( r != null )
 				return r;
 
 			// Convert regular Nashorn object
 
-			for( Iterator<String> i = script.propertyIterator(); i.hasNext(); )
+			for( String key : scriptObject.getOwnKeys( true ) )
 			{
-				String key = i.next();
-				Object value = script.get( key );
+				Object value = scriptObject.get( key );
 				Object converted = fromExtendedJSON( value );
 				if( converted != value )
-					script.put( key, converted, false );
+					scriptObject.put( key, converted, false );
 			}
 		}
 
@@ -144,20 +145,20 @@ public class NashornJsonImplementation implements JsonImplementation
 
 	private final NashornJsonExtender jsonExtender;
 
-	private void encode( StringBuilder s, Object object, boolean javaScript, boolean indent, int depth )
+	private void encode( StringBuilder s, Object object, boolean allowCode, boolean indent, int depth )
 	{
 		if( indent )
 			indent( s, depth );
 
 		if( jsonExtender != null )
 		{
-			Object r = jsonExtender.to( object, false, javaScript );
+			Object r = jsonExtender.to( object, false, allowCode );
 			if( r != null )
 			{
 				if( r instanceof Literal )
 					s.append( ( (Literal) r ).toString( depth ) );
 				else
-					encode( s, r, indent, javaScript, depth );
+					encode( s, r, indent, allowCode, depth );
 				return;
 			}
 		}
@@ -169,12 +170,12 @@ public class NashornJsonImplementation implements JsonImplementation
 		else if( ( object instanceof Number ) || ( object instanceof Boolean ) )
 			s.append( object );
 		else if( object instanceof Collection )
-			encodeCollection( s, (Collection<?>) object, javaScript, depth );
+			encodeCollection( s, (Collection<?>) object, allowCode, depth );
 		else if( object instanceof Map )
-			encodeMap( s, (Map<?, ?>) object, javaScript, depth );
+			encodeMap( s, (Map<?, ?>) object, allowCode, depth );
 		else if( object instanceof NativeArray )
-			encodeNativeArray( s, (NativeArray) object, javaScript, depth );
-		else if( ( object instanceof NativeString ) || ( object instanceof ConsString ) )
+			encodeNativeArray( s, (NativeArray) object, allowCode, depth );
+		else if( ( object instanceof String ) || ( object instanceof NativeString ) || ( object instanceof ConsString ) )
 		{
 			s.append( '\"' );
 			s.append( JavaScriptUtil.escape( object.toString() ) );
@@ -183,11 +184,13 @@ public class NashornJsonImplementation implements JsonImplementation
 		else if( object instanceof ScriptFunction )
 		{
 			s.append( '\"' );
-			s.append( JavaScriptUtil.escape( object.toString() ) );
+			s.append( JavaScriptUtil.escape( ( (ScriptFunction) object ).toSource() ) );
 			s.append( '\"' );
 		}
 		else if( object instanceof ScriptObject )
-			encodeScriptableObject( s, (ScriptObject) object, javaScript, depth );
+		{
+			encodeScriptObject( s, (ScriptObject) object, allowCode, depth );
+		}
 		else
 		{
 			s.append( '\"' );
@@ -280,11 +283,11 @@ public class NashornJsonImplementation implements JsonImplementation
 		s.append( '}' );
 	}
 
-	private void encodeNativeArray( StringBuilder s, NativeArray array, boolean javaScript, int depth )
+	private void encodeNativeArray( StringBuilder s, NativeArray nativeArray, boolean javaScript, int depth )
 	{
 		s.append( '[' );
 
-		ArrayData data = array.getArray();
+		ArrayData data = nativeArray.getArray();
 		long length = data.length();
 		if( length > 0 )
 		{
@@ -315,12 +318,12 @@ public class NashornJsonImplementation implements JsonImplementation
 		s.append( ']' );
 	}
 
-	private void encodeScriptableObject( StringBuilder s, ScriptObject object, boolean javaScript, int depth )
+	private void encodeScriptObject( StringBuilder s, ScriptObject scriptObject, boolean javaScript, int depth )
 	{
 		s.append( '{' );
 
-		Property[] properties = object.getMap().getProperties();
-		int length = properties.length;
+		String[] keys = scriptObject.getOwnKeys( true );
+		int length = keys.length;
 		if( length > 0 )
 		{
 			if( depth > -1 )
@@ -328,8 +331,8 @@ public class NashornJsonImplementation implements JsonImplementation
 
 			for( int i = 0; i < length; i++ )
 			{
-				String key = properties[i].getKey();
-				Object value = object.get( key );
+				String key = keys[i];
+				Object value = scriptObject.get( key );
 
 				if( depth > -1 )
 					indent( s, depth + 1 );

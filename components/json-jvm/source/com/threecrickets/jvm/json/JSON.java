@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.threecrickets.jvm.json.nashorn.NashornJsonImplementation;
 import com.threecrickets.jvm.json.rhino.RhinoJsonImplementation;
 
 /**
@@ -144,5 +145,23 @@ public class JSON
 	// //////////////////////////////////////////////////////////////////////////
 	// Private
 
-	private static volatile JsonImplementation implementation = new RhinoJsonImplementation();
+	private static volatile JsonImplementation implementation;
+
+	static
+	{
+		try
+		{
+			implementation = new NashornJsonImplementation();
+		}
+		catch( NoClassDefFoundError x )
+		{
+			// Nashorn not available
+			implementation = new RhinoJsonImplementation();
+		}
+		catch( UnsupportedClassVersionError x )
+		{
+			// Nashorn requires at least JVM 7
+			implementation = new RhinoJsonImplementation();
+		}
+	}
 }

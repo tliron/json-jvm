@@ -16,14 +16,14 @@ import org.mozilla.javascript.ScriptableObject;
 public interface RhinoJsonExtender
 {
 	/**
-	 * @param scriptable
+	 * @param scriptableObject
 	 *        The JavaScript object
 	 * @param rhino
 	 *        True to prefer conversion to Rhino native objects (Date, RegExp,
 	 *        etc.)
 	 * @return A new object or null if not converted
 	 */
-	public Object from( ScriptableObject scriptable, boolean rhino );
+	public Object from( ScriptableObject scriptableObject, boolean rhino );
 
 	/**
 	 * @param object

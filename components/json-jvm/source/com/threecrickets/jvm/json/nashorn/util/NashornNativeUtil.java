@@ -81,26 +81,26 @@ public class NashornNativeUtil
 		return null;
 	}
 
-	public static Object from( ScriptObject script )
+	public static Object from( ScriptObject scriptObject )
 	{
-		if( script instanceof NativeDate )
+		if( scriptObject instanceof NativeDate )
 		{
-			Double time = (Double) NativeDate.getTime( script );
+			Double time = (Double) NativeDate.getTime( scriptObject );
 			return new Date( time.longValue() );
 		}
-		else if( script instanceof NativeString )
-			return script.toString();
+		else if( scriptObject instanceof NativeString )
+			return scriptObject.toString();
 
 		return null;
 	}
 
-	public static String[] from( NativeRegExp regExp )
+	public static String[] from( NativeRegExp nativeRegExp )
 	{
-		Object source = regExp.get( "source" );
+		Object source = nativeRegExp.get( "source" );
 
-		Object isGlobal = regExp.get( "global" );
-		Object isIgnoreCase = regExp.get( "ignoreCase" );
-		Object isMultiLine = regExp.get( "multiline" );
+		Object isGlobal = nativeRegExp.get( "global" );
+		Object isIgnoreCase = nativeRegExp.get( "ignoreCase" );
+		Object isMultiLine = nativeRegExp.get( "multiline" );
 
 		// Note: JVM pattern does not support a "g" flag. Also, compiling
 		// the pattern here is a waste of time.

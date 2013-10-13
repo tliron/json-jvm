@@ -16,14 +16,14 @@ import jdk.nashorn.internal.runtime.ScriptObject;
 public interface NashornJsonExtender
 {
 	/**
-	 * @param script
+	 * @param scriptObject
 	 *        The JavaScript object
 	 * @param nashorn
 	 *        True to prefer conversion to Nashorn native objects (Date, RegExp,
 	 *        etc.)
 	 * @return A new object or null if not converted
 	 */
-	public Object from( ScriptObject script, boolean nashorn );
+	public Object from( ScriptObject scriptObject, boolean nashorn );
 
 	/**
 	 * @param object
