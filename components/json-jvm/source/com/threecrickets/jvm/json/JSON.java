@@ -11,6 +11,7 @@
 
 package com.threecrickets.jvm.json;
 
+import java.io.Reader;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -140,6 +141,18 @@ public class JSON
 	public static Object fromExtendedJSON( Object object )
 	{
 		return getImplementation().fromExtendedJSON( object );
+	}
+
+	/**
+	 * Creates a tokener.
+	 * 
+	 * @param reader
+	 *        The reader
+	 * @return A new tokener
+	 */
+	public static Object createTokener( Reader reader )
+	{
+		return getImplementation().createTokener( reader );
 	}
 
 	// //////////////////////////////////////////////////////////////////////////

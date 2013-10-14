@@ -11,6 +11,7 @@
 
 package com.threecrickets.jvm.json;
 
+import java.io.Reader;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -94,4 +95,13 @@ public interface JsonImplementation
 	 * @return The converted object or the original
 	 */
 	public abstract Object fromExtendedJSON( Object object );
+
+	/**
+	 * Creates a tokener.
+	 * 
+	 * @param reader
+	 *        The reader
+	 * @return A new tokener
+	 */
+	public abstract Object createTokener( Reader reader );
 }

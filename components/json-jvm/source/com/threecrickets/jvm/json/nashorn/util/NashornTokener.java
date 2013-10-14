@@ -38,23 +38,21 @@ import jdk.nashorn.internal.runtime.ScriptObject;
 import com.threecrickets.jvm.json.JsonException;
 
 /**
- * A JsonTokener takes a source string and extracts characters and tokens from
- * it. It is used by the JSONObject and JSONArray constructors to parse JSON
- * source strings.
+ * A tokener takes a source string and extracts characters and tokens from it.
  */
-public class JsonTokener
+public class NashornTokener
 {
 	//
 	// Construction
 	//
 
 	/**
-	 * Construct a JSONTokener from a reader.
+	 * Construct a tokener from a reader.
 	 * 
 	 * @param reader
 	 *        A reader.
 	 */
-	public JsonTokener( Reader reader )
+	public NashornTokener( Reader reader )
 	{
 		this.reader = reader.markSupported() ? reader : new BufferedReader( reader );
 		this.eof = false;
@@ -66,12 +64,12 @@ public class JsonTokener
 	}
 
 	/**
-	 * Construct a JSONTokener from a string.
+	 * Construct a tokener from a string.
 	 * 
 	 * @param s
 	 *        A source string.
 	 */
-	public JsonTokener( String s )
+	public NashornTokener( String s )
 	{
 		this( new StringReader( s ) );
 	}

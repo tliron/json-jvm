@@ -11,6 +11,7 @@
 
 package com.threecrickets.jvm.json.nashorn;
 
+import java.io.Reader;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -29,7 +30,7 @@ import jdk.nashorn.internal.runtime.arrays.ArrayData;
 
 import com.threecrickets.jvm.json.JsonException;
 import com.threecrickets.jvm.json.JsonImplementation;
-import com.threecrickets.jvm.json.nashorn.util.JsonTokener;
+import com.threecrickets.jvm.json.nashorn.util.NashornTokener;
 import com.threecrickets.jvm.json.util.JavaScriptUtil;
 import com.threecrickets.jvm.json.util.Literal;
 
@@ -76,7 +77,7 @@ public class NashornJsonImplementation implements JsonImplementation
 
 	public Object from( String json, boolean extendedJSON ) throws JsonException
 	{
-		JsonTokener tokener = new JsonTokener( json );
+		NashornTokener tokener = new NashornTokener( json );
 		Object object = tokener.createNative();
 		if( extendedJSON )
 			object = fromExtendedJSON( object );
@@ -138,6 +139,11 @@ public class NashornJsonImplementation implements JsonImplementation
 		}
 
 		return object;
+	}
+
+	public Object createTokener( Reader reader )
+	{
+		return new NashornTokener( reader );
 	}
 
 	// //////////////////////////////////////////////////////////////////////////

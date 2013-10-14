@@ -11,6 +11,7 @@
 
 package com.threecrickets.jvm.json.rhino;
 
+import java.io.Reader;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -27,7 +28,7 @@ import org.mozilla.javascript.Undefined;
 
 import com.threecrickets.jvm.json.JsonException;
 import com.threecrickets.jvm.json.JsonImplementation;
-import com.threecrickets.jvm.json.rhino.util.JsonTokener;
+import com.threecrickets.jvm.json.rhino.util.RhinoTokener;
 import com.threecrickets.jvm.json.util.JavaScriptUtil;
 import com.threecrickets.jvm.json.util.Literal;
 
@@ -71,7 +72,7 @@ public class RhinoJsonImplementation implements JsonImplementation
 
 	public Object from( String json, boolean extendedJSON ) throws JsonException
 	{
-		JsonTokener tokener = new JsonTokener( json );
+		RhinoTokener tokener = new RhinoTokener( json );
 		Object object = tokener.createNative();
 		if( extendedJSON )
 			object = fromExtendedJSON( object );
@@ -135,6 +136,11 @@ public class RhinoJsonImplementation implements JsonImplementation
 		}
 
 		return object;
+	}
+
+	public Object createTokener( Reader reader )
+	{
+		return new RhinoTokener( reader );
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
