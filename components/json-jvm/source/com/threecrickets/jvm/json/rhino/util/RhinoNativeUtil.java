@@ -107,7 +107,7 @@ public class RhinoNativeUtil
 	{
 		Context context = Context.getCurrentContext();
 		Scriptable scope = ScriptRuntime.getTopCallScope( context );
-		return context.compileFunction( scope, value.toString(), RhinoNativeUtil.class.getCanonicalName(), 0, null );
+		return context.compileFunction( scope, value.toString(), RhinoNativeUtil.class.getName(), 0, null );
 	}
 
 	public static Object from( Scriptable scriptable )
