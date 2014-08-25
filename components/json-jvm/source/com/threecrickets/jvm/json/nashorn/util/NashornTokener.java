@@ -88,6 +88,8 @@ public class NashornTokener
 	 * consume.
 	 * 
 	 * @return true if not yet at the end of the source.
+	 * @throws JsonException
+	 *         In case of a JSON conversion error
 	 */
 	public boolean more() throws JsonException
 	{
@@ -108,6 +110,9 @@ public class NashornTokener
 	 * Back up one character. This provides a sort of lookahead capability, so
 	 * that you can test for a digit or letter before attempting to parse the
 	 * next number or identifier.
+	 * 
+	 * @throws JsonException
+	 *         In case of a JSON conversion error
 	 */
 	public void back() throws JsonException
 	{
@@ -125,6 +130,8 @@ public class NashornTokener
 	 * Get the next character in the source string.
 	 * 
 	 * @return The next character, or 0 if past the end of the source string.
+	 * @throws JsonException
+	 *         In case of a JSON conversion error
 	 */
 	public char next() throws JsonException
 	{
@@ -225,8 +232,9 @@ public class NashornTokener
 	/**
 	 * Get the next char in the string, skipping whitespace.
 	 * 
-	 * @throws JsonException
 	 * @return A character, or 0 if there are no more characters.
+	 * @throws JsonException
+	 *         In case of a JSON conversion error
 	 */
 	public char nextClean() throws JsonException
 	{
@@ -315,6 +323,8 @@ public class NashornTokener
 	 * @param d
 	 *        A delimiter character.
 	 * @return A string.
+	 * @throws JsonException
+	 *         In case of a JSON conversion error
 	 */
 	public String nextTo( char d ) throws JsonException
 	{
@@ -341,6 +351,8 @@ public class NashornTokener
 	 * @param delimiters
 	 *        A set of delimiter characters.
 	 * @return A string, trimmed.
+	 * @throws JsonException
+	 *         In case of a JSON conversion error
 	 */
 	public String nextTo( String delimiters ) throws JsonException
 	{
@@ -365,9 +377,9 @@ public class NashornTokener
 	 * Get the next value. The value can be a Boolean, Double, Integer,
 	 * JSONArray, JSONObject, Long, or String, or the JSONObject.NULL object.
 	 * 
+	 * @return An object.
 	 * @throws JsonException
 	 *         If syntax error.
-	 * @return An object.
 	 */
 	public Object nextValue() throws JsonException
 	{
@@ -420,6 +432,8 @@ public class NashornTokener
 	 *        A character to skip to.
 	 * @return The requested character, or zero if the requested character is
 	 *         not found.
+	 * @throws JsonException
+	 *         In case of a JSON conversion error
 	 */
 	public char skipTo( char to ) throws JsonException
 	{
@@ -470,6 +484,7 @@ public class NashornTokener
 	 * 
 	 * @return A NativeObject or a NativeArray
 	 * @throws JsonException
+	 *         In case of a JSON conversion error
 	 */
 	public Object createNative() throws JsonException
 	{
@@ -495,6 +510,7 @@ public class NashornTokener
 	 * 
 	 * @return A NativeObject
 	 * @throws JsonException
+	 *         In case of a JSON conversion error
 	 */
 	public ScriptObject createNativeObject() throws JsonException
 	{
@@ -565,6 +581,7 @@ public class NashornTokener
 	 * 
 	 * @return A NativeArray
 	 * @throws JsonException
+	 *         In case of a JSON conversion error
 	 */
 	public ScriptObject createNativeArray() throws JsonException
 	{

@@ -56,6 +56,7 @@ public class JSON
 	 *        The JSON string
 	 * @return A native object or array
 	 * @throws JsonException
+	 *         In case of a JSON conversion error
 	 */
 	public static Object from( String json ) throws JsonException
 	{
@@ -73,6 +74,7 @@ public class JSON
 	 *        Whether to convert extended JSON objects
 	 * @return A native object or array
 	 * @throws JsonException
+	 *         In case of a JSON conversion error
 	 */
 	public static Object from( String json, boolean extendedJSON ) throws JsonException
 	{

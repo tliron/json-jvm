@@ -85,7 +85,7 @@ public class NashornNativeUtil
 	{
 		if( scriptObject instanceof NativeDate )
 		{
-			Double time = (Double) NativeDate.getTime( scriptObject );
+			Double time = NativeDate.getTime( scriptObject );
 			return new Date( time.longValue() );
 		}
 		else if( scriptObject instanceof NativeString )

@@ -28,6 +28,7 @@ public interface JsonImplementation
 	 *        The JSON string
 	 * @return A native object or array
 	 * @throws JsonException
+	 *         In case of a JSON conversion error
 	 */
 	public abstract Object from( String json ) throws JsonException;
 
@@ -42,6 +43,7 @@ public interface JsonImplementation
 	 *        Whether to convert extended JSON objects
 	 * @return A native object or array
 	 * @throws JsonException
+	 *         In case of a JSON conversion error
 	 */
 	public abstract Object from( String json, boolean extendedJSON ) throws JsonException;
 

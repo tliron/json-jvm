@@ -11,6 +11,6 @@
 	</configurations>
 	<dependencies>
 		<dependency org="org.mozilla" name="rhino" rev="1.7R4" transitive="false" />
-		<dependency org="jdk.nashorn" name="nashorn-backport" rev="0.1+" transitive="false" />
+		<!-- <dependency org="jdk.nashorn" name="nashorn-backport" rev="0.1+" transitive="false" /> -->
 	</dependencies>
 </ivy-module>
