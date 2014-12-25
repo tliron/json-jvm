@@ -612,12 +612,12 @@ public class NashornTokener
 			if( nextClean() == ',' )
 			{
 				back();
-				nativeArray.set( arrayIndex++, null, false );
+				nativeArray.set( arrayIndex++, null, 0 );
 			}
 			else
 			{
 				back();
-				nativeArray.set( arrayIndex++, nextValue(), false );
+				nativeArray.set( arrayIndex++, nextValue(), 0 );
 			}
 			c = nextClean();
 			switch( c )

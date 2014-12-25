@@ -18,10 +18,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import jdk.nashorn.internal.objects.NativeArray;
 import jdk.nashorn.internal.objects.NativeString;
 import jdk.nashorn.internal.objects.annotations.Function;
 import jdk.nashorn.internal.runtime.ConsString;
+import jdk.nashorn.internal.runtime.Context;
 import jdk.nashorn.internal.runtime.NumberToString;
 import jdk.nashorn.internal.runtime.ScriptFunction;
 import jdk.nashorn.internal.runtime.ScriptObject;
@@ -168,6 +170,10 @@ public class NashornJsonImplementation implements JsonImplementation
 				return;
 			}
 		}
+
+		// Unwrap if necessary
+		if( object instanceof ScriptObjectMirror )
+			object = ScriptObjectMirror.unwrap( object, Context.getGlobal() );
 
 		if( ( object == null ) || ( object instanceof Undefined ) )
 			s.append( "null" );
