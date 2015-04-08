@@ -14,8 +14,8 @@
 	<inceptionYear>2009</inceptionYear>
 
 	<scm>
-		<connection>scm:git:https://code.google.com/p/json-jvm/</connection>
-		<url>http://code.google.com/p/json-jvm/source/browse/</url>
+		<connection>scm:git:git://github.com/tliron/json-jvm.git</connection>
+		<url>https://github.com/tliron/json-jvm</url>
 	</scm>
 
 	<organization>
