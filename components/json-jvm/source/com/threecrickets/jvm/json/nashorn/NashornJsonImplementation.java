@@ -18,12 +18,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import jdk.nashorn.internal.objects.NativeArray;
 import jdk.nashorn.internal.objects.NativeString;
 import jdk.nashorn.internal.objects.annotations.Function;
 import jdk.nashorn.internal.runtime.ConsString;
-import jdk.nashorn.internal.runtime.Context;
 import jdk.nashorn.internal.runtime.NumberToString;
 import jdk.nashorn.internal.runtime.ScriptFunction;
 import jdk.nashorn.internal.runtime.ScriptObject;
@@ -32,6 +30,7 @@ import jdk.nashorn.internal.runtime.arrays.ArrayData;
 
 import com.threecrickets.jvm.json.JsonException;
 import com.threecrickets.jvm.json.JsonImplementation;
+import com.threecrickets.jvm.json.nashorn.util.NashornNativeUtil;
 import com.threecrickets.jvm.json.nashorn.util.NashornTokener;
 import com.threecrickets.jvm.json.util.JavaScriptUtil;
 import com.threecrickets.jvm.json.util.Literal;
@@ -172,8 +171,7 @@ public class NashornJsonImplementation implements JsonImplementation
 		}
 
 		// Unwrap if necessary
-		if( object instanceof ScriptObjectMirror )
-			object = ScriptObjectMirror.unwrap( object, Context.getGlobal() );
+		object = NashornNativeUtil.unwrap( object );
 
 		if( ( object == null ) || ( object instanceof Undefined ) )
 			s.append( "null" );

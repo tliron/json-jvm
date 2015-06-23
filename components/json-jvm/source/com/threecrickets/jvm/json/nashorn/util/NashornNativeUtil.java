@@ -14,14 +14,17 @@ package com.threecrickets.jvm.json.nashorn.util;
 import java.util.Date;
 import java.util.regex.Pattern;
 
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import jdk.nashorn.internal.objects.Global;
 import jdk.nashorn.internal.objects.NativeArray;
 import jdk.nashorn.internal.objects.NativeDate;
 import jdk.nashorn.internal.objects.NativeNumber;
 import jdk.nashorn.internal.objects.NativeRegExp;
 import jdk.nashorn.internal.objects.NativeString;
+import jdk.nashorn.internal.runtime.Context;
 import jdk.nashorn.internal.runtime.ScriptFunction;
 import jdk.nashorn.internal.runtime.ScriptObject;
+import jdk.nashorn.internal.runtime.Undefined;
 
 /**
  * Conversion between native Nashorn values and JVM equivalents.
@@ -141,5 +144,33 @@ public class NashornNativeUtil
 	public static ScriptObject wrap( Object value )
 	{
 		return (ScriptObject) Global.toObject( value );
+	}
+
+	public static Object unwrap( Object object )
+	{
+		object = ScriptObjectMirror.unwrap( object, Context.getGlobal() );
+		if( object instanceof ScriptObjectMirror )
+		{
+			ScriptObjectMirror scriptObjectMirror = (ScriptObjectMirror) object;
+			ScriptObject scriptObject = NashornNativeUtil.newObject();
+			for( String key : scriptObjectMirror.getOwnKeys( true ) )
+			{
+				Object value = getProperty( scriptObjectMirror, key );
+				scriptObject.put( key, value, false );
+			}
+			object = scriptObject;
+		}
+		return object;
+	}
+
+	// //////////////////////////////////////////////////////////////////////////
+	// Private
+
+	private static Object getProperty( ScriptObjectMirror scriptObject, String key )
+	{
+		Object value = scriptObject.get( key );
+		if( value instanceof Undefined )
+			return null;
+		return value;
 	}
 }
