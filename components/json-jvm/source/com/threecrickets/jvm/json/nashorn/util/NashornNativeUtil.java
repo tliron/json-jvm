@@ -24,7 +24,6 @@ import jdk.nashorn.internal.objects.NativeString;
 import jdk.nashorn.internal.runtime.Context;
 import jdk.nashorn.internal.runtime.ScriptFunction;
 import jdk.nashorn.internal.runtime.ScriptObject;
-import jdk.nashorn.internal.runtime.Undefined;
 
 /**
  * Conversion between native Nashorn values and JVM equivalents.
@@ -80,7 +79,7 @@ public class NashornNativeUtil
 
 	public static ScriptFunction toFunction( Object value )
 	{
-		// TODO
+		// TODO: compile the source code into a function
 		return null;
 	}
 
@@ -148,6 +147,13 @@ public class NashornNativeUtil
 
 	public static Object unwrap( Object object )
 	{
+		// Nashorn creates these mirrors when they pass through certain
+		// boundaries. However, we are only allowed to unwrap them from the same
+		// global context in which they were wrapped. We will try to unwrap them
+		// here, but if that doesn't work we will just create a shallow clone.
+		// The clone won't function like the original, but will be good enough
+		// for our purposes here.
+
 		object = ScriptObjectMirror.unwrap( object, Context.getGlobal() );
 		if( object instanceof ScriptObjectMirror )
 		{
@@ -155,22 +161,11 @@ public class NashornNativeUtil
 			ScriptObject scriptObject = NashornNativeUtil.newObject();
 			for( String key : scriptObjectMirror.getOwnKeys( true ) )
 			{
-				Object value = getProperty( scriptObjectMirror, key );
+				Object value = scriptObjectMirror.get( key );
 				scriptObject.put( key, value, false );
 			}
 			object = scriptObject;
 		}
 		return object;
-	}
-
-	// //////////////////////////////////////////////////////////////////////////
-	// Private
-
-	private static Object getProperty( ScriptObjectMirror scriptObject, String key )
-	{
-		Object value = scriptObject.get( key );
-		if( value instanceof Undefined )
-			return null;
-		return value;
 	}
 }
