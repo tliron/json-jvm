@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.regex.Pattern;
 
+import com.threecrickets.jvm.json.java.JavaJsonImplementation;
+
 /**
  * Conversion between native JVM language objects and JSON.
  * <p>
@@ -26,7 +28,7 @@ import java.util.regex.Pattern;
  * 
  * @author Tal Liron
  */
-public class JSON
+public class JSONOld
 {
 	//
 	// Static attributes
@@ -37,16 +39,16 @@ public class JSON
 	 * <p>
 	 * By default, it is the implementation for the current Scripturian
 	 * {@link com.threecrickets.scripturian.LanguageAdapter}. If there is none
-	 * available, the dummy {@link DefaultJsonImplementation} will be used.
+	 * available, the dummy {@link JavaJsonImplementation} will be used.
 	 * <p>
 	 * You can override this behavior and set a specific implementation using
-	 * {@link #setImplementation(JsonImplementation)}.
+	 * {@link #setImplementation(JsonImplementationOld)}.
 	 * 
 	 * @return The implementation
 	 */
-	public static JsonImplementation getImplementation()
+	public static JsonImplementationOld getImplementation()
 	{
-		JsonImplementation implementation = JSON.implementation;
+		JsonImplementationOld implementation = JSONOld.implementation;
 		if( implementation != null )
 			return implementation;
 		else
@@ -66,9 +68,9 @@ public class JSON
 	 * @param implementation
 	 *        The new implementation or null
 	 */
-	public static void setImplementation( JsonImplementation implementation )
+	public static void setImplementation( JsonImplementationOld implementation )
 	{
-		JSON.implementation = implementation;
+		JSONOld.implementation = implementation;
 	}
 
 	//
@@ -83,10 +85,10 @@ public class JSON
 	 * @param json
 	 *        The JSON string
 	 * @return A native object or array
-	 * @throws JsonException
+	 * @throws JsonSyntaxError
 	 *         In case of a JSON conversion error
 	 */
-	public static Object from( String json ) throws JsonException
+	public static Object from( String json ) throws JsonSyntaxError
 	{
 		return getImplementation().from( json );
 	}
@@ -101,10 +103,10 @@ public class JSON
 	 * @param extendedJSON
 	 *        Whether to convert extended JSON objects
 	 * @return A native object or array
-	 * @throws JsonException
+	 * @throws JsonSyntaxError
 	 *         In case of a JSON conversion error
 	 */
-	public static Object from( String json, boolean extendedJSON ) throws JsonException
+	public static Object from( String json, boolean extendedJSON ) throws JsonSyntaxError
 	{
 		return getImplementation().from( json, extendedJSON );
 	}
@@ -188,9 +190,9 @@ public class JSON
 	// //////////////////////////////////////////////////////////////////////////
 	// Private
 
-	private static volatile JsonImplementation implementation;
+	private static volatile JsonImplementationOld implementation;
 
-	private static final Map<String, JsonImplementation> implementations = new HashMap<String, JsonImplementation>();
+	private static final Map<String, JsonImplementationOld> implementations = new HashMap<String, JsonImplementationOld>();
 
 	/**
 	 * The name of the current Scripturian
@@ -212,10 +214,10 @@ public class JSON
 
 	static
 	{
-		ServiceLoader<JsonImplementation> implementationLoader = ServiceLoader.load( JsonImplementation.class );
-		for( JsonImplementation implementation : implementationLoader )
+		ServiceLoader<JsonImplementationOld> implementationLoader = ServiceLoader.load( JsonImplementationOld.class );
+		for( JsonImplementationOld implementation : implementationLoader )
 		{
-			JsonImplementation existing = implementations.get( implementation.getName() );
+			JsonImplementationOld existing = implementations.get( implementation.getName() );
 			if( ( existing == null ) || ( implementation.getPriority() > existing.getPriority() ) )
 				implementations.put( implementation.getName(), implementation );
 		}

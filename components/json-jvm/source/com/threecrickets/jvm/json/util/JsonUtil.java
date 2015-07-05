@@ -19,25 +19,37 @@ import java.util.regex.Pattern;
  * 
  * @author Tal Liron
  */
-public class JavaScriptUtil
+public class JsonUtil
 {
 	//
 	// Static operations
 	//
 
 	/**
-	 * Escape JavaScript literal strings (assumes they are surrounded by double
-	 * quotes, not single quotes).
+	 * Escape literal strings (assumes they are surrounded by double quotes).
 	 * 
 	 * @param string
 	 *        The string
-	 * @return The literal string
+	 * @return The escaped string
 	 */
-	public static String escape( String string )
+	public static CharSequence escape( CharSequence string )
 	{
 		for( int i = 0, length = ESCAPE_PATTERNS.length; i < length; i++ )
 			string = ESCAPE_PATTERNS[i].matcher( string ).replaceAll( ESCAPE_REPLACEMENTS[i] );
 		return string;
+	}
+
+	/**
+	 * Encodes a number as a JSON-compatible string.
+	 * 
+	 * @param number
+	 *        The number
+	 * @return The number encoded as a string
+	 */
+	public static String number( Number number )
+	{
+		// TODO
+		return number.toString();
 	}
 
 	// //////////////////////////////////////////////////////////////////////////

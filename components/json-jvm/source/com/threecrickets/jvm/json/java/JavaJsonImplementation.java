@@ -9,26 +9,21 @@
  * at http://threecrickets.com/
  */
 
-package com.threecrickets.jvm.json.nashorn;
+package com.threecrickets.jvm.json.java;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.threecrickets.jvm.json.JsonContext;
 import com.threecrickets.jvm.json.JsonEncoder;
 import com.threecrickets.jvm.json.JsonImplementation;
 import com.threecrickets.jvm.json.JsonTransformer;
-import com.threecrickets.jvm.json.java.JavaJsonImplementation;
-import com.threecrickets.jvm.json.java.NullEncoder;
 
-import jdk.nashorn.internal.objects.Global;
-import jdk.nashorn.internal.objects.NativeArray;
-import jdk.nashorn.internal.objects.NativeNumber;
-import jdk.nashorn.internal.objects.NativeString;
-import jdk.nashorn.internal.runtime.ScriptObject;
-
-public class NashornJsonImplementation implements JsonImplementation
+public class JavaJsonImplementation implements JsonImplementation
 {
 	//
 	// Static operations
@@ -36,13 +31,12 @@ public class NashornJsonImplementation implements JsonImplementation
 
 	public static void addEncoders( Collection<JsonEncoder> encoders )
 	{
-		encoders.add( new ConsStringEncoder() );
-		encoders.add( new NativeArrayEncoder() );
-		encoders.add( new NativeBooleanEncoder() );
-		encoders.add( new NativeNumberEncoder() );
-		encoders.add( new NativeStringEncoder() );
-		encoders.add( new ScriptObjectEncoder() );
-		encoders.add( new ScriptObjectMirrorEncoder() );
+		encoders.add( new BooleanEncoder() );
+		encoders.add( new CharSequenceEncoder() );
+		encoders.add( new CollectionEncoder() );
+		encoders.add( new MapEncoder() );
+		encoders.add( new NullEncoder() );
+		encoders.add( new NumberEncoder() );
 	}
 
 	//
@@ -52,12 +46,11 @@ public class NashornJsonImplementation implements JsonImplementation
 	public void initialize()
 	{
 		addEncoders( encoders );
-		JavaJsonImplementation.addEncoders( encoders );
 	}
 
 	public String getName()
 	{
-		return "Nashorn";
+		return "Java";
 	}
 
 	public int getPriority()
@@ -87,42 +80,48 @@ public class NashornJsonImplementation implements JsonImplementation
 
 	public Object createObject()
 	{
-		return Global.newEmptyInstance();
+		return new LinkedHashMap<String, Object>();
 	}
 
+	@SuppressWarnings("unchecked")
 	public void putInObject( Object object, String key, Object value )
 	{
-		( (ScriptObject) object ).put( key, value, true );
+		( (Map<String, Object>) object ).put( key, value );
 	}
 
 	public Object createArray( int length )
 	{
-		return NativeArray.construct( true, null, length );
+		return new ArrayList<Object>( length );
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setInArray( Object object, int index, Object value )
 	{
-		( (NativeArray) object ).set( index, value, 0 );
+		List<Object> list = (List<Object>) object;
+		if( index == list.size() )
+			list.add( value );
+		else
+			list.set( index, value );
 	}
 
 	public Object createString( String value )
 	{
-		return NativeString.constructor( true, null, value );
+		return value;
 	}
 
 	public Object createDouble( double value )
 	{
-		return NativeNumber.constructor( true, null, value );
+		return new Double( value );
 	}
 
 	public Object createInteger( int value )
 	{
-		return Global.toObject( value );
+		return new Integer( value );
 	}
 
 	public Object createLong( long value )
 	{
-		return Global.toObject( value );
+		return new Long( value );
 	}
 
 	// //////////////////////////////////////////////////////////////////////////

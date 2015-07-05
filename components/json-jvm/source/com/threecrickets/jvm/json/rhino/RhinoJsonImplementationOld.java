@@ -26,15 +26,15 @@ import org.mozilla.javascript.ScriptRuntime;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.Undefined;
 
-import com.threecrickets.jvm.json.JsonException;
-import com.threecrickets.jvm.json.JsonImplementation;
+import com.threecrickets.jvm.json.JsonImplementationOld;
+import com.threecrickets.jvm.json.JsonSyntaxError;
 import com.threecrickets.jvm.json.rhino.util.RhinoTokener;
-import com.threecrickets.jvm.json.util.JavaScriptUtil;
+import com.threecrickets.jvm.json.util.JsonUtil;
 import com.threecrickets.jvm.json.util.Literal;
 
 /**
  * Conversion between native Rhino values and JSON. Extensible using a
- * {@link RhinoJsonExtender}.
+ * {@link RhinoJsonExtenderOld}.
  * <p>
  * Recognizes Rhino's {@link NativeArray}, {@link NativeJavaObject},
  * org.mozilla.javascript.NativeString, {@link ConsString}, {@link Undefined},
@@ -45,18 +45,18 @@ import com.threecrickets.jvm.json.util.Literal;
  * 
  * @author Tal Liron
  */
-public class RhinoJsonImplementation implements JsonImplementation
+public class RhinoJsonImplementationOld implements JsonImplementationOld
 {
 	//
 	// Construction
 	//
 
-	public RhinoJsonImplementation()
+	public RhinoJsonImplementationOld()
 	{
 		this( null );
 	}
 
-	public RhinoJsonImplementation( RhinoJsonExtender jsonExtender )
+	public RhinoJsonImplementationOld( RhinoJsonExtenderOld jsonExtender )
 	{
 		this.jsonExtender = jsonExtender;
 	}
@@ -75,12 +75,12 @@ public class RhinoJsonImplementation implements JsonImplementation
 		return 0;
 	}
 
-	public Object from( String json ) throws JsonException
+	public Object from( String json ) throws JsonSyntaxError
 	{
 		return from( json, false );
 	}
 
-	public Object from( String json, boolean extendedJSON ) throws JsonException
+	public Object from( String json, boolean extendedJSON ) throws JsonSyntaxError
 	{
 		RhinoTokener tokener = new RhinoTokener( json );
 		Object object = tokener.createNative();
@@ -156,7 +156,7 @@ public class RhinoJsonImplementation implements JsonImplementation
 	// //////////////////////////////////////////////////////////////////////////
 	// Private
 
-	private final RhinoJsonExtender jsonExtender;
+	private final RhinoJsonExtenderOld jsonExtender;
 
 	private void encode( StringBuilder s, Object object, boolean allowCode, boolean indent, int depth )
 	{
@@ -212,7 +212,7 @@ public class RhinoJsonImplementation implements JsonImplementation
 				// Unpack NativeString (private class) or ConsString
 
 				s.append( '\"' );
-				s.append( JavaScriptUtil.escape( scriptableObject.toString() ) );
+				s.append( JsonUtil.escape( scriptableObject.toString() ) );
 				s.append( '\"' );
 			}
 			else if( className.equals( "Function" ) )
@@ -220,7 +220,7 @@ public class RhinoJsonImplementation implements JsonImplementation
 				// Trying to encode functions can result in stack overflows...
 
 				s.append( '\"' );
-				s.append( JavaScriptUtil.escape( scriptableObject.toString() ) );
+				s.append( JsonUtil.escape( scriptableObject.toString() ) );
 				s.append( '\"' );
 			}
 			else
@@ -229,7 +229,7 @@ public class RhinoJsonImplementation implements JsonImplementation
 		else
 		{
 			s.append( '\"' );
-			s.append( JavaScriptUtil.escape( object.toString() ) );
+			s.append( JsonUtil.escape( object.toString() ) );
 			s.append( '\"' );
 		}
 	}
@@ -290,7 +290,7 @@ public class RhinoJsonImplementation implements JsonImplementation
 					indent( s, depth + 1 );
 
 				s.append( '\"' );
-				s.append( JavaScriptUtil.escape( key ) );
+				s.append( JsonUtil.escape( key ) );
 				s.append( "\":" );
 
 				if( depth > -1 )
@@ -372,7 +372,7 @@ public class RhinoJsonImplementation implements JsonImplementation
 					indent( s, depth + 1 );
 
 				s.append( '\"' );
-				s.append( JavaScriptUtil.escape( key ) );
+				s.append( JsonUtil.escape( key ) );
 				s.append( "\":" );
 
 				if( depth > -1 )

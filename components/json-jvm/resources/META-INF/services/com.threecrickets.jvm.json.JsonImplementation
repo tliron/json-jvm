@@ -1,2 +1,2 @@
 com.threecrickets.jvm.json.nashorn.NashornJsonImplementation
-com.threecrickets.jvm.json.rhino.RhinoJsonImplementation
+#com.threecrickets.jvm.json.rhino.RhinoJsonImplementation

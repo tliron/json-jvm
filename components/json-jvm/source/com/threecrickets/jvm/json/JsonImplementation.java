@@ -11,14 +11,15 @@
 
 package com.threecrickets.jvm.json;
 
-import java.io.Reader;
 import java.util.Collection;
-import java.util.Date;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 public interface JsonImplementation
 {
+	/**
+	 * Initialize the implementation.
+	 */
+	public void initialize();
+
 	/**
 	 * The name of this implementation.
 	 * 
@@ -33,91 +34,27 @@ public interface JsonImplementation
 	 */
 	public int getPriority();
 
-	/**
-	 * Recursively convert from JSON into native values.
-	 * <p>
-	 * Creates native dicts, arrays and primitives.
-	 * 
-	 * @param json
-	 *        The JSON string
-	 * @return A native object or array
-	 * @throws JsonException
-	 *         In case of a JSON conversion error
-	 */
-	public Object from( String json ) throws JsonException;
+	public JsonContext createContext( Appendable out, boolean expand, boolean allowCode, int depth );
 
-	/**
-	 * Recursively convert from JSON into native values.
-	 * <p>
-	 * Creates native dicts, arrays and primitives.
-	 * 
-	 * @param json
-	 *        The JSON string
-	 * @param extendedJSON
-	 *        Whether to convert extended JSON objects
-	 * @return A native object or array
-	 * @throws JsonException
-	 *         In case of a JSON conversion error
-	 */
-	public Object from( String json, boolean extendedJSON ) throws JsonException;
+	public Collection<JsonEncoder> getEncoders();
 
-	/**
-	 * Recursively convert from native values to JSON.
-	 * <p>
-	 * Also recognizes JVM types: {@link Map}, {@link Collection}, {@link Date},
-	 * {@link Pattern} and primitives.
-	 * 
-	 * @param object
-	 *        A native object or array
-	 * @return The JSON string
-	 */
-	public String to( Object object );
+	public JsonEncoder getFallbackEncoder();
 
-	/**
-	 * Recursively convert from native values to JSON.
-	 * <p>
-	 * Also recognizes JVM types: {@link Map}, {@link Collection}, {@link Date},
-	 * {@link Pattern} and primitives.
-	 * 
-	 * @param object
-	 *        A native object or array
-	 * @param indent
-	 *        Whether to indent the JSON for human readability
-	 * @return The JSON string
-	 */
-	public String to( Object object, boolean indent );
+	public Collection<JsonTransformer> getTransformers();
 
-	/**
-	 * Recursively convert from native values to JSON.
-	 * <p>
-	 * Also recognizes JVM types: {@link Map}, {@link Collection}, {@link Date},
-	 * {@link Pattern} and primitives.
-	 * 
-	 * @param object
-	 *        A native object or array
-	 * @param indent
-	 *        Whether to indent the JSON for human readability
-	 * @param allowCode
-	 *        True to allow language code (this will break JSON compatibility!)
-	 * @return The JSON string
-	 */
-	public String to( Object object, boolean indent, boolean allowCode );
+	public Object createObject();
 
-	/**
-	 * Recursively converts extended JSON to native values.
-	 * 
-	 * @param object
-	 *        A native object or array
-	 * @return The converted object or the original
-	 */
-	public Object fromExtendedJSON( Object object );
+	public void putInObject( Object object, String key, Object value );
 
-	/**
-	 * Creates a tokener.
-	 * 
-	 * @param reader
-	 *        The reader
-	 * @return A new tokener
-	 */
-	public Object createTokener( Reader reader );
+	public Object createArray( int length );
+
+	public void setInArray( Object object, int index, Object value );
+
+	public Object createString( String value );
+
+	public Object createDouble( double value );
+
+	public Object createInteger( int value );
+
+	public Object createLong( long value );
 }

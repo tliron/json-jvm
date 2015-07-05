@@ -32,10 +32,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
+import com.threecrickets.jvm.json.JsonSyntaxError;
+
 import jdk.nashorn.internal.objects.NativeArray;
 import jdk.nashorn.internal.runtime.ScriptObject;
-
-import com.threecrickets.jvm.json.JsonException;
 
 /**
  * A tokener takes a source string and extracts characters and tokens from it.
@@ -88,10 +88,10 @@ public class NashornTokener
 	 * consume.
 	 * 
 	 * @return true if not yet at the end of the source.
-	 * @throws JsonException
+	 * @throws JsonSyntaxError
 	 *         In case of a JSON conversion error
 	 */
-	public boolean more() throws JsonException
+	public boolean more() throws JsonSyntaxError
 	{
 		next();
 		if( end() )
@@ -111,14 +111,14 @@ public class NashornTokener
 	 * that you can test for a digit or letter before attempting to parse the
 	 * next number or identifier.
 	 * 
-	 * @throws JsonException
+	 * @throws JsonSyntaxError
 	 *         In case of a JSON conversion error
 	 */
-	public void back() throws JsonException
+	public void back() throws JsonSyntaxError
 	{
 		if( usePrevious || index <= 0 )
 		{
-			throw new JsonException( "Stepping back two steps is not supported" );
+			throw new JsonSyntaxError( "Stepping back two steps is not supported", line, character );
 		}
 		this.index -= 1;
 		this.character -= 1;
@@ -130,10 +130,10 @@ public class NashornTokener
 	 * Get the next character in the source string.
 	 * 
 	 * @return The next character, or 0 if past the end of the source string.
-	 * @throws JsonException
+	 * @throws JsonSyntaxError
 	 *         In case of a JSON conversion error
 	 */
-	public char next() throws JsonException
+	public char next() throws JsonSyntaxError
 	{
 		int c;
 		if( this.usePrevious )
@@ -149,7 +149,7 @@ public class NashornTokener
 			}
 			catch( IOException exception )
 			{
-				throw new JsonException( exception );
+				throw new JsonSyntaxError( exception.getMessage(), line, character );
 			}
 
 			if( c <= 0 )
@@ -184,10 +184,10 @@ public class NashornTokener
 	 * @param c
 	 *        The character to match.
 	 * @return The character.
-	 * @throws JsonException
+	 * @throws JsonSyntaxError
 	 *         if the character does not match.
 	 */
-	public char next( char c ) throws JsonException
+	public char next( char c ) throws JsonSyntaxError
 	{
 		char n = next();
 		if( n != c )
@@ -203,11 +203,11 @@ public class NashornTokener
 	 * @param n
 	 *        The number of characters to take.
 	 * @return A string of n characters.
-	 * @throws JsonException
+	 * @throws JsonSyntaxError
 	 *         Substring bounds error if there are not n characters remaining in
 	 *         the source string.
 	 */
-	public String next( int n ) throws JsonException
+	public String next( int n ) throws JsonSyntaxError
 	{
 		if( n == 0 )
 		{
@@ -233,10 +233,10 @@ public class NashornTokener
 	 * Get the next char in the string, skipping whitespace.
 	 * 
 	 * @return A character, or 0 if there are no more characters.
-	 * @throws JsonException
+	 * @throws JsonSyntaxError
 	 *         In case of a JSON conversion error
 	 */
-	public char nextClean() throws JsonException
+	public char nextClean() throws JsonSyntaxError
 	{
 		for( ;; )
 		{
@@ -258,10 +258,10 @@ public class NashornTokener
 	 *        quote)</small> or <code>'</code>&nbsp;<small>(single
 	 *        quote)</small>.
 	 * @return A String.
-	 * @throws JsonException
+	 * @throws JsonSyntaxError
 	 *         Unterminated string.
 	 */
-	public String nextString( char quote ) throws JsonException
+	public String nextString( char quote ) throws JsonSyntaxError
 	{
 		char c;
 		StringBuffer sb = new StringBuffer();
@@ -323,10 +323,10 @@ public class NashornTokener
 	 * @param d
 	 *        A delimiter character.
 	 * @return A string.
-	 * @throws JsonException
+	 * @throws JsonSyntaxError
 	 *         In case of a JSON conversion error
 	 */
-	public String nextTo( char d ) throws JsonException
+	public String nextTo( char d ) throws JsonSyntaxError
 	{
 		StringBuffer sb = new StringBuffer();
 		for( ;; )
@@ -351,10 +351,10 @@ public class NashornTokener
 	 * @param delimiters
 	 *        A set of delimiter characters.
 	 * @return A string, trimmed.
-	 * @throws JsonException
+	 * @throws JsonSyntaxError
 	 *         In case of a JSON conversion error
 	 */
-	public String nextTo( String delimiters ) throws JsonException
+	public String nextTo( String delimiters ) throws JsonSyntaxError
 	{
 		char c;
 		StringBuffer sb = new StringBuffer();
@@ -378,10 +378,10 @@ public class NashornTokener
 	 * JSONArray, JSONObject, Long, or String, or the JSONObject.NULL object.
 	 * 
 	 * @return An object.
-	 * @throws JsonException
+	 * @throws JsonSyntaxError
 	 *         If syntax error.
 	 */
-	public Object nextValue() throws JsonException
+	public Object nextValue() throws JsonSyntaxError
 	{
 		char c = nextClean();
 		String s;
@@ -432,10 +432,10 @@ public class NashornTokener
 	 *        A character to skip to.
 	 * @return The requested character, or zero if the requested character is
 	 *         not found.
-	 * @throws JsonException
+	 * @throws JsonSyntaxError
 	 *         In case of a JSON conversion error
 	 */
-	public char skipTo( char to ) throws JsonException
+	public char skipTo( char to ) throws JsonSyntaxError
 	{
 		char c;
 		try
@@ -460,7 +460,7 @@ public class NashornTokener
 		}
 		catch( IOException exc )
 		{
-			throw new JsonException( exc );
+			throw new JsonSyntaxError( exc.getMessage(), line, character );
 		}
 
 		back();
@@ -474,19 +474,19 @@ public class NashornTokener
 	 *        The error message.
 	 * @return A JSONException object, suitable for throwing
 	 */
-	public JsonException syntaxError( String message )
+	public JsonSyntaxError syntaxError( String message )
 	{
-		return new JsonException( message + toString() );
+		return new JsonSyntaxError( message + toString(), line, character );
 	}
 
 	/**
 	 * Create a native Rhino object as appropriate.
 	 * 
 	 * @return A NativeObject or a NativeArray
-	 * @throws JsonException
+	 * @throws JsonSyntaxError
 	 *         In case of a JSON conversion error
 	 */
-	public Object createNative() throws JsonException
+	public Object createNative() throws JsonSyntaxError
 	{
 		char next = nextClean();
 		if( next == '{' )
@@ -509,10 +509,10 @@ public class NashornTokener
 	 * Create a Rhino NativeObject.
 	 * 
 	 * @return A NativeObject
-	 * @throws JsonException
+	 * @throws JsonSyntaxError
 	 *         In case of a JSON conversion error
 	 */
-	public ScriptObject createNativeObject() throws JsonException
+	public ScriptObject createNativeObject() throws JsonSyntaxError
 	{
 		ScriptObject scriptObject = NashornNativeUtil.newObject();
 		char c;
@@ -580,10 +580,10 @@ public class NashornTokener
 	 * Create a Rhino NativeArray.
 	 * 
 	 * @return A NativeArray
-	 * @throws JsonException
+	 * @throws JsonSyntaxError
 	 *         In case of a JSON conversion error
 	 */
-	public ScriptObject createNativeArray() throws JsonException
+	public ScriptObject createNativeArray() throws JsonSyntaxError
 	{
 		NativeArray nativeArray = NashornNativeUtil.newArray( 0 );
 		int arrayIndex = 0;

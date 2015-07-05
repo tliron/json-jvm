@@ -9,31 +9,31 @@
  * at http://threecrickets.com/
  */
 
-package com.threecrickets.jvm.json.rhino;
+package com.threecrickets.jvm.json.nashorn;
 
-import org.mozilla.javascript.ScriptableObject;
+import jdk.nashorn.internal.runtime.ScriptObject;
 
-public interface RhinoJsonExtender
+public interface NashornJsonExtenderOld
 {
 	/**
-	 * @param scriptableObject
+	 * @param scriptObject
 	 *        The JavaScript object
-	 * @param rhino
-	 *        True to prefer conversion to Rhino native objects (Date, RegExp,
+	 * @param nashorn
+	 *        True to prefer conversion to Nashorn native objects (Date, RegExp,
 	 *        etc.)
 	 * @return A new object or null if not converted
 	 */
-	public Object from( ScriptableObject scriptableObject, boolean rhino );
+	public Object from( ScriptObject scriptObject, boolean nashorn );
 
 	/**
 	 * @param object
 	 *        The object
-	 * @param rhino
-	 *        True to create Rhino native objects, otherwise a java.util.HashMap
-	 *        will be used
+	 * @param nashorn
+	 *        True to create Nashorn native objects, otherwise a
+	 *        java.util.HashMap will be used
 	 * @param allowCode
 	 *        True to allow language code (this will break JSON compatibility!)
 	 * @return A JavaScript value or null if not converted
 	 */
-	public Object to( Object object, boolean rhino, boolean allowCode );
+	public Object to( Object object, boolean nashorn, boolean allowCode );
 }
