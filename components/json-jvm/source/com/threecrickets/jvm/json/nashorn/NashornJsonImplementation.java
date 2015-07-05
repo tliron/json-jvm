@@ -71,6 +71,16 @@ public class NashornJsonImplementation implements JsonImplementation
 	// JsonImplementation
 	//
 
+	public String getName()
+	{
+		return "Nashorn";
+	}
+
+	public int getPriority()
+	{
+		return 0;
+	}
+
 	public Object from( String json ) throws JsonException
 	{
 		return from( json, false );
@@ -173,8 +183,15 @@ public class NashornJsonImplementation implements JsonImplementation
 		// Unwrap if necessary
 		object = NashornNativeUtil.unwrap( object );
 
-		if( ( object == null ) || ( object instanceof Undefined ) )
+		if( object == null )
 			s.append( "null" );
+		else if( object instanceof Undefined )
+		{
+			if( allowCode )
+				s.append( "undefined" );
+			else
+				s.append( "null" );
+		}
 		else if( object instanceof Double )
 			s.append( NumberToString.stringFor( (Double) object ) );
 		else if( ( object instanceof Number ) || ( object instanceof Boolean ) )

@@ -65,6 +65,16 @@ public class RhinoJsonImplementation implements JsonImplementation
 	// JsonImplementation
 	//
 
+	public String getName()
+	{
+		return "Rhino";
+	}
+
+	public int getPriority()
+	{
+		return 0;
+	}
+
 	public Object from( String json ) throws JsonException
 	{
 		return from( json, false );
@@ -166,8 +176,15 @@ public class RhinoJsonImplementation implements JsonImplementation
 			}
 		}
 
-		if( ( object == null ) || ( object instanceof Undefined ) )
+		if( object == null )
 			s.append( "null" );
+		else if( object instanceof Undefined )
+		{
+			if( allowCode )
+				s.append( "undefined" );
+			else
+				s.append( "null" );
+		}
 		else if( object instanceof Double )
 			s.append( ScriptRuntime.numberToString( (Double) object, 10 ) );
 		else if( ( object instanceof Number ) || ( object instanceof Boolean ) )

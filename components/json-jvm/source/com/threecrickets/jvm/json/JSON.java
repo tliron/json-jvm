@@ -14,11 +14,10 @@ package com.threecrickets.jvm.json;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.regex.Pattern;
-
-import com.threecrickets.jvm.json.nashorn.NashornJsonImplementation;
-import com.threecrickets.jvm.json.rhino.RhinoJsonImplementation;
 
 /**
  * Conversion between native JVM language objects and JSON.
@@ -33,11 +32,40 @@ public class JSON
 	// Static attributes
 	//
 
+	/**
+	 * The implementation used by the static methods in this class.
+	 * <p>
+	 * By default, it is the implementation for the current Scripturian
+	 * {@link com.threecrickets.scripturian.LanguageAdapter}. If there is none
+	 * available, the dummy {@link DefaultJsonImplementation} will be used.
+	 * <p>
+	 * You can override this behavior and set a specific implementation using
+	 * {@link #setImplementation(JsonImplementation)}.
+	 * 
+	 * @return The implementation
+	 */
 	public static JsonImplementation getImplementation()
 	{
-		return implementation;
+		JsonImplementation implementation = JSON.implementation;
+		if( implementation != null )
+			return implementation;
+		else
+		{
+			implementation = implementations.get( getLanguageAdapterName() );
+			// if( implementation == null )
+			// implementation = new DefaultJsonImplementation();
+			return implementation;
+		}
 	}
 
+	/**
+	 * Sets the implementation to be used by the static methods in this class.
+	 * If set to null (the default) will use the implementation for the current
+	 * Scripturian {@link com.threecrickets.scripturian.LanguageAdapter}
+	 * 
+	 * @param implementation
+	 *        The new implementation or null
+	 */
 	public static void setImplementation( JsonImplementation implementation )
 	{
 		JSON.implementation = implementation;
@@ -162,21 +190,34 @@ public class JSON
 
 	private static volatile JsonImplementation implementation;
 
-	static
+	private static final Map<String, JsonImplementation> implementations = new HashMap<String, JsonImplementation>();
+
+	/**
+	 * The name of the current Scripturian
+	 * {@link com.threecrickets.scripturian.LanguageAdapter}.
+	 * 
+	 * @return The language adapter name
+	 */
+	private static String getLanguageAdapterName()
 	{
 		try
 		{
-			implementation = new NashornJsonImplementation();
+			return (String) com.threecrickets.scripturian.ExecutionContext.getCurrent().getAdapter().getAttributes().get( com.threecrickets.scripturian.LanguageAdapter.NAME );
 		}
 		catch( NoClassDefFoundError x )
 		{
-			// Nashorn not available
-			implementation = new RhinoJsonImplementation();
+			return null;
 		}
-		catch( UnsupportedClassVersionError x )
+	}
+
+	static
+	{
+		ServiceLoader<JsonImplementation> implementationLoader = ServiceLoader.load( JsonImplementation.class );
+		for( JsonImplementation implementation : implementationLoader )
 		{
-			// Nashorn requires at least JVM 7
-			implementation = new RhinoJsonImplementation();
+			JsonImplementation existing = implementations.get( implementation.getName() );
+			if( ( existing == null ) || ( implementation.getPriority() > existing.getPriority() ) )
+				implementations.put( implementation.getName(), implementation );
 		}
 	}
 }

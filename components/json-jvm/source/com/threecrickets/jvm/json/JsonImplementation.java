@@ -20,6 +20,20 @@ import java.util.regex.Pattern;
 public interface JsonImplementation
 {
 	/**
+	 * The name of this implementation.
+	 * 
+	 * @return The name of this implementation
+	 */
+	public String getName();
+
+	/**
+	 * The priority of this implementation. Higher numbers mean higher priority.
+	 * 
+	 * @return The priority of this implementation
+	 */
+	public int getPriority();
+
+	/**
 	 * Recursively convert from JSON into native values.
 	 * <p>
 	 * Creates native dicts, arrays and primitives.
@@ -30,7 +44,7 @@ public interface JsonImplementation
 	 * @throws JsonException
 	 *         In case of a JSON conversion error
 	 */
-	public abstract Object from( String json ) throws JsonException;
+	public Object from( String json ) throws JsonException;
 
 	/**
 	 * Recursively convert from JSON into native values.
@@ -45,7 +59,7 @@ public interface JsonImplementation
 	 * @throws JsonException
 	 *         In case of a JSON conversion error
 	 */
-	public abstract Object from( String json, boolean extendedJSON ) throws JsonException;
+	public Object from( String json, boolean extendedJSON ) throws JsonException;
 
 	/**
 	 * Recursively convert from native values to JSON.
@@ -57,7 +71,7 @@ public interface JsonImplementation
 	 *        A native object or array
 	 * @return The JSON string
 	 */
-	public abstract String to( Object object );
+	public String to( Object object );
 
 	/**
 	 * Recursively convert from native values to JSON.
@@ -71,7 +85,7 @@ public interface JsonImplementation
 	 *        Whether to indent the JSON for human readability
 	 * @return The JSON string
 	 */
-	public abstract String to( Object object, boolean indent );
+	public String to( Object object, boolean indent );
 
 	/**
 	 * Recursively convert from native values to JSON.
@@ -87,7 +101,7 @@ public interface JsonImplementation
 	 *        True to allow language code (this will break JSON compatibility!)
 	 * @return The JSON string
 	 */
-	public abstract String to( Object object, boolean indent, boolean allowCode );
+	public String to( Object object, boolean indent, boolean allowCode );
 
 	/**
 	 * Recursively converts extended JSON to native values.
@@ -96,7 +110,7 @@ public interface JsonImplementation
 	 *        A native object or array
 	 * @return The converted object or the original
 	 */
-	public abstract Object fromExtendedJSON( Object object );
+	public Object fromExtendedJSON( Object object );
 
 	/**
 	 * Creates a tokener.
@@ -105,5 +119,5 @@ public interface JsonImplementation
 	 *        The reader
 	 * @return A new tokener
 	 */
-	public abstract Object createTokener( Reader reader );
+	public Object createTokener( Reader reader );
 }
