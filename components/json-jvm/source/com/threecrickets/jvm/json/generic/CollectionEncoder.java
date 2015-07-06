@@ -9,22 +9,21 @@
  * at http://threecrickets.com/
  */
 
-package com.threecrickets.jvm.json.nashorn;
+package com.threecrickets.jvm.json.generic;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
 
 import com.threecrickets.jvm.json.JsonContext;
 import com.threecrickets.jvm.json.JsonEncoder;
 
-import jdk.nashorn.internal.objects.NativeArray;
-import jdk.nashorn.internal.runtime.arrays.ArrayData;
-
 /**
- * A JSON encoder for Nashorn's {@link NativeArray}.
+ * A JSON encoder for {@link Collection} implementations.
  * 
  * @author Tal Liron
  */
-public class NativeArrayEncoder implements JsonEncoder
+public class CollectionEncoder implements JsonEncoder
 {
 	//
 	// JsonEncoder
@@ -32,28 +31,28 @@ public class NativeArrayEncoder implements JsonEncoder
 
 	public boolean canEncode( Object object, JsonContext context )
 	{
-		return object instanceof NativeArray;
+		return object instanceof Collection;
 	}
 
 	public void encode( Object object, JsonContext context ) throws IOException
 	{
-		ArrayData data = ( (NativeArray) object ).getArray();
+		@SuppressWarnings("unchecked")
+		Collection<Object> collection = (Collection<Object>) object;
 
 		context.out.append( '[' );
 
-		int length = (int) data.length();
-		if( length > 0 )
+		if( !collection.isEmpty() )
 		{
 			context.newline();
 
-			for( int i = 0; i < length; i++ )
+			for( Iterator<Object> i = collection.iterator(); i.hasNext(); )
 			{
-				Object value = data.getObject( i );
+				Object value = i.next();
 
 				context.indentNested();
 				context.nest().encode( value );
 
-				if( i < length - 1 )
+				if( i.hasNext() )
 					context.comma();
 			}
 

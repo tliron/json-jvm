@@ -11,6 +11,12 @@
 
 package com.threecrickets.jvm.json;
 
+/**
+ * Exception for JSON syntax errors.
+ * 
+ * @author Tal Liron
+ * @see JsonDecoder
+ */
 public class JsonSyntaxError extends Exception
 {
 	//

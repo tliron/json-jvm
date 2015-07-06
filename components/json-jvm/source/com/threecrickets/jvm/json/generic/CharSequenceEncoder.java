@@ -9,15 +9,19 @@
  * at http://threecrickets.com/
  */
 
-package com.threecrickets.jvm.json.java;
+package com.threecrickets.jvm.json.generic;
 
 import java.io.IOException;
 
 import com.threecrickets.jvm.json.JsonContext;
 import com.threecrickets.jvm.json.JsonEncoder;
-import com.threecrickets.jvm.json.util.JsonUtil;
 
-public class NumberEncoder implements JsonEncoder
+/**
+ * A JSON encoder for {@link CharSequence} implementations.
+ * 
+ * @author Tal Liron
+ */
+public class CharSequenceEncoder implements JsonEncoder
 {
 	//
 	// JsonEncoder
@@ -25,11 +29,11 @@ public class NumberEncoder implements JsonEncoder
 
 	public boolean canEncode( Object object, JsonContext context )
 	{
-		return object instanceof Number;
+		return object instanceof CharSequence;
 	}
 
 	public void encode( Object object, JsonContext context ) throws IOException
 	{
-		context.out.append( JsonUtil.number( (Number) object ) );
+		context.quoted( (CharSequence) object );
 	}
 }

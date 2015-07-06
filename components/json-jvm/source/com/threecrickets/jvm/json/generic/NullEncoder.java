@@ -9,22 +9,19 @@
  * at http://threecrickets.com/
  */
 
-package com.threecrickets.jvm.json.nashorn;
+package com.threecrickets.jvm.json.generic;
 
 import java.io.IOException;
 
 import com.threecrickets.jvm.json.JsonContext;
 import com.threecrickets.jvm.json.JsonEncoder;
-import com.threecrickets.jvm.json.util.JsonUtil;
-
-import jdk.nashorn.internal.objects.NativeNumber;
 
 /**
- * A JSON encoder for Nashorn's {@link NativeNumber}.
+ * A JSON encoder for null values.
  * 
  * @author Tal Liron
  */
-public class NativeNumberEncoder implements JsonEncoder
+public class NullEncoder implements JsonEncoder
 {
 	//
 	// JsonEncoder
@@ -32,11 +29,11 @@ public class NativeNumberEncoder implements JsonEncoder
 
 	public boolean canEncode( Object object, JsonContext context )
 	{
-		return object instanceof NativeNumber;
+		return object == null;
 	}
 
 	public void encode( Object object, JsonContext context ) throws IOException
 	{
-		context.out.append( JsonUtil.number( ( (NativeNumber) object ).getValue() ) );
+		context.out.append( "null" );
 	}
 }

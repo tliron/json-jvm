@@ -9,16 +9,21 @@
  * at http://threecrickets.com/
  */
 
-package com.threecrickets.jvm.json.java;
+package com.threecrickets.jvm.json.rhino;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
+
+import org.mozilla.javascript.Scriptable;
 
 import com.threecrickets.jvm.json.JsonContext;
 import com.threecrickets.jvm.json.JsonEncoder;
 
-public class MapEncoder implements JsonEncoder
+/**
+ * A JSON encoder for Rhino's native {@link Scriptable}.
+ * 
+ * @author Tal Liron
+ */
+public class ScriptableEncoder implements JsonEncoder
 {
 	//
 	// JsonEncoder
@@ -26,30 +31,32 @@ public class MapEncoder implements JsonEncoder
 
 	public boolean canEncode( Object object, JsonContext context )
 	{
-		return object instanceof Map;
+		return object instanceof Scriptable;
 	}
 
 	public void encode( Object object, JsonContext context ) throws IOException
 	{
-		@SuppressWarnings("unchecked")
-		Map<String, Object> map = (Map<String, Object>) object;
+		Scriptable scriptable = (Scriptable) object;
 
 		context.out.append( '{' );
 
-		if( !map.isEmpty() )
+		Object[] keys = scriptable.getIds();
+		int length = keys.length;
+		if( length > 0 )
 		{
 			context.newline();
 
-			for( Iterator<Map.Entry<String, Object>> i = map.entrySet().iterator(); i.hasNext(); )
+			for( int i = 0; i < length; i++ )
 			{
-				Map.Entry<String, Object> entry = i.next();
+				String key = keys[i].toString();
+				Object value = scriptable.get( key, scriptable );
 
 				context.indentNested();
-				context.quoted( entry.getKey() );
+				context.quoted( key );
 				context.colon();
-				context.nest().encode( entry.getValue() );
+				context.nest().encode( value );
 
-				if( i.hasNext() )
+				if( i < length - 1 )
 					context.comma();
 			}
 

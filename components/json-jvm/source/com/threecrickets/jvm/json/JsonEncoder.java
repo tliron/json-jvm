@@ -13,6 +13,11 @@ package com.threecrickets.jvm.json;
 
 import java.io.IOException;
 
+/**
+ * Encodes objects into JSON text.
+ * 
+ * @author Tal Liron
+ */
 public interface JsonEncoder
 {
 	/**

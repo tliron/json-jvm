@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.regex.Pattern;
 
-import com.threecrickets.jvm.json.java.JavaJsonImplementation;
+import com.threecrickets.jvm.json.generic.GenericJsonImplementation;
 
 /**
  * Conversion between native JVM language objects and JSON.
@@ -39,7 +39,7 @@ public class JSONOld
 	 * <p>
 	 * By default, it is the implementation for the current Scripturian
 	 * {@link com.threecrickets.scripturian.LanguageAdapter}. If there is none
-	 * available, the dummy {@link JavaJsonImplementation} will be used.
+	 * available, the dummy {@link GenericJsonImplementation} will be used.
 	 * <p>
 	 * You can override this behavior and set a specific implementation using
 	 * {@link #setImplementation(JsonImplementationOld)}.

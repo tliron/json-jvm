@@ -21,12 +21,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-import com.threecrickets.jvm.json.java.JavaJsonImplementation;
+import com.threecrickets.jvm.json.generic.GenericJsonImplementation;
 
 /**
- * Conversion between native JVM language objects and JSON.
- * <p>
- * This class can be used directly in JVM languages.
+ * Conversion to and from JSON text and native objects.
  * 
  * @author Tal Liron
  */
@@ -41,7 +39,7 @@ public class Json
 	 * <p>
 	 * By default, it is the implementation for the current Scripturian
 	 * {@link com.threecrickets.scripturian.LanguageAdapter}. If there is none
-	 * available, the dummy {@link JavaJsonImplementation} will be used.
+	 * available, the dummy {@link GenericJsonImplementation} will be used.
 	 * <p>
 	 * You can override this behavior and set a specific implementation using
 	 * {@link #setImplementation(JsonImplementation)}.
@@ -57,7 +55,7 @@ public class Json
 		{
 			implementation = implementations.get( getLanguageAdapterName() );
 			if( implementation == null )
-				implementation = new JavaJsonImplementation();
+				implementation = new GenericJsonImplementation();
 			return implementation;
 		}
 	}
@@ -216,8 +214,22 @@ public class Json
 	 */
 	public static Object from( Reader reader, boolean allowTransform ) throws JsonSyntaxError, IOException
 	{
-		JsonDecoder decoder = new JsonDecoder( getImplementation(), reader, allowTransform );
+		JsonDecoder decoder = createDecoder( reader, allowTransform );
 		return decoder.decode();
+	}
+
+	/**
+	 * Creates a JSON decoder that decoded into implementation-specific objects.
+	 * 
+	 * @param reader
+	 *        The reader
+	 * @param allowTransform
+	 *        Whether to allow transformations
+	 * @return A decoder.
+	 */
+	public static JsonDecoder createDecoder( Reader reader, boolean allowTransform )
+	{
+		return getImplementation().createDecoder( reader, allowTransform );
 	}
 
 	// //////////////////////////////////////////////////////////////////////////
@@ -247,7 +259,7 @@ public class Json
 
 	static
 	{
-		ServiceLoader<JsonImplementation> implementationLoader = ServiceLoader.load( JsonImplementation.class );
+		ServiceLoader<JsonImplementation> implementationLoader = ServiceLoader.load( JsonImplementation.class, Json.class.getClassLoader() );
 		for( JsonImplementation implementation : implementationLoader )
 		{
 			JsonImplementation existing = implementations.get( implementation.getName() );

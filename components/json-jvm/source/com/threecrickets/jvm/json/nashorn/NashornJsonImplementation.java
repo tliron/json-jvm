@@ -11,16 +11,12 @@
 
 package com.threecrickets.jvm.json.nashorn;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
-import com.threecrickets.jvm.json.JsonContext;
+import com.threecrickets.jvm.json.BaseJsonImplementation;
 import com.threecrickets.jvm.json.JsonEncoder;
-import com.threecrickets.jvm.json.JsonImplementation;
 import com.threecrickets.jvm.json.JsonTransformer;
-import com.threecrickets.jvm.json.java.JavaJsonImplementation;
-import com.threecrickets.jvm.json.java.NullEncoder;
+import com.threecrickets.jvm.json.generic.GenericJsonImplementation;
 
 import jdk.nashorn.internal.objects.Global;
 import jdk.nashorn.internal.objects.NativeArray;
@@ -28,7 +24,15 @@ import jdk.nashorn.internal.objects.NativeNumber;
 import jdk.nashorn.internal.objects.NativeString;
 import jdk.nashorn.internal.runtime.ScriptObject;
 
-public class NashornJsonImplementation implements JsonImplementation
+/**
+ * A JSON implementation for the
+ * <a href="http://openjdk.java.net/projects/nashorn/">Nashorn JavaScript
+ * engine</a>. Uses {@link ScriptObject} for JSON objects and
+ * {@link NativeArray} for JSON arrays, as well as Nashorn-specific primitives.
+ * 
+ * @author Tal Liron
+ */
+public class NashornJsonImplementation extends BaseJsonImplementation
 {
 	//
 	// Static operations
@@ -45,6 +49,11 @@ public class NashornJsonImplementation implements JsonImplementation
 		encoders.add( new ScriptObjectMirrorEncoder() );
 	}
 
+	public static void addTransformers( Collection<JsonTransformer> transformers )
+	{
+		transformers.add( new ScriptObjectMirrorTransformer() );
+	}
+
 	//
 	// JsonImplementation
 	//
@@ -52,37 +61,13 @@ public class NashornJsonImplementation implements JsonImplementation
 	public void initialize()
 	{
 		addEncoders( encoders );
-		JavaJsonImplementation.addEncoders( encoders );
+		GenericJsonImplementation.addEncoders( encoders );
+		addTransformers( transformers );
 	}
 
 	public String getName()
 	{
 		return "Nashorn";
-	}
-
-	public int getPriority()
-	{
-		return 0;
-	}
-
-	public JsonContext createContext( Appendable out, boolean expand, boolean allowCode, int depth )
-	{
-		return new JsonContext( this, out, expand, allowCode, depth );
-	}
-
-	public Collection<JsonEncoder> getEncoders()
-	{
-		return Collections.unmodifiableCollection( encoders );
-	}
-
-	public JsonEncoder getFallbackEncoder()
-	{
-		return fallbackEncoder;
-	}
-
-	public Collection<JsonTransformer> getTransformers()
-	{
-		return Collections.unmodifiableCollection( transformers );
 	}
 
 	public Object createObject()
@@ -124,16 +109,4 @@ public class NashornJsonImplementation implements JsonImplementation
 	{
 		return Global.toObject( value );
 	}
-
-	// //////////////////////////////////////////////////////////////////////////
-	// Protected
-
-	protected final ArrayList<JsonEncoder> encoders = new ArrayList<JsonEncoder>();
-
-	protected final ArrayList<JsonTransformer> transformers = new ArrayList<JsonTransformer>();
-
-	// //////////////////////////////////////////////////////////////////////////
-	// Private
-
-	private final JsonEncoder fallbackEncoder = new NullEncoder();
 }

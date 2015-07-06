@@ -9,22 +9,25 @@
  * at http://threecrickets.com/
  */
 
-package com.threecrickets.jvm.json.nashorn;
+package com.threecrickets.jvm.json.rhino;
 
 import java.io.IOException;
 
+import org.mozilla.javascript.ConsString;
+
 import com.threecrickets.jvm.json.JsonContext;
 import com.threecrickets.jvm.json.JsonEncoder;
-import com.threecrickets.jvm.json.util.JsonUtil;
-
-import jdk.nashorn.internal.objects.NativeNumber;
+import com.threecrickets.jvm.json.generic.CharSequenceEncoder;
 
 /**
- * A JSON encoder for Nashorn's {@link NativeNumber}.
+ * A JSON encoder for Rhino's native {@link ConsString}.
+ * <p>
+ * Here only for completion: actually, {@link CharSequenceEncoder} would also be
+ * able to encode a {@link ConsString}.
  * 
  * @author Tal Liron
  */
-public class NativeNumberEncoder implements JsonEncoder
+public class ConsStringEncoder implements JsonEncoder
 {
 	//
 	// JsonEncoder
@@ -32,11 +35,11 @@ public class NativeNumberEncoder implements JsonEncoder
 
 	public boolean canEncode( Object object, JsonContext context )
 	{
-		return object instanceof NativeNumber;
+		return object instanceof ConsString;
 	}
 
 	public void encode( Object object, JsonContext context ) throws IOException
 	{
-		context.out.append( JsonUtil.number( ( (NativeNumber) object ).getValue() ) );
+		context.quoted( (ConsString) object );
 	}
 }

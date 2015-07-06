@@ -18,6 +18,11 @@ import com.threecrickets.jvm.json.JsonEncoder;
 
 import jdk.nashorn.internal.runtime.ScriptObject;
 
+/**
+ * A JSON encoder for Nashorn's native {@link ScriptObject}.
+ * 
+ * @author Tal Liron
+ */
 public class ScriptObjectEncoder implements JsonEncoder
 {
 	//

@@ -15,11 +15,12 @@ import java.io.IOException;
 
 import com.threecrickets.jvm.json.JsonContext;
 import com.threecrickets.jvm.json.JsonEncoder;
-import com.threecrickets.jvm.json.java.CharSequenceEncoder;
+import com.threecrickets.jvm.json.generic.CharSequenceEncoder;
 
 import jdk.nashorn.internal.runtime.ConsString;
 
 /**
+ * A JSON encoder for Nashorn's native {@link ConsString}.
  * <p>
  * Here only for completion: actually, {@link CharSequenceEncoder} would also be
  * able to encode a {@link ConsString}.

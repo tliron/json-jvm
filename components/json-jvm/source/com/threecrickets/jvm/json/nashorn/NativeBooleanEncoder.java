@@ -18,6 +18,11 @@ import com.threecrickets.jvm.json.JsonEncoder;
 
 import jdk.nashorn.internal.objects.NativeBoolean;
 
+/**
+ * A JSON encoder for Nashorn's {@link NativeBoolean}.
+ * 
+ * @author Tal Liron
+ */
 public class NativeBooleanEncoder implements JsonEncoder
 {
 	//

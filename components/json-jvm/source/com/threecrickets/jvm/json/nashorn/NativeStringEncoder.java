@@ -18,6 +18,11 @@ import com.threecrickets.jvm.json.JsonEncoder;
 
 import jdk.nashorn.internal.objects.NativeString;
 
+/**
+ * A JSON encoder for Nashorn's {@link NativeString}.
+ * 
+ * @author Tal Liron
+ */
 public class NativeStringEncoder implements JsonEncoder
 {
 	//
@@ -31,6 +36,6 @@ public class NativeStringEncoder implements JsonEncoder
 
 	public void encode( Object object, JsonContext context ) throws IOException
 	{
-		context.quoted( ( (NativeString) object ).toString() );
+		context.quoted( object.toString() );
 	}
 }

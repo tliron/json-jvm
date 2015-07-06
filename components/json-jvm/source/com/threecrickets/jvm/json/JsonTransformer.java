@@ -11,7 +11,24 @@
 
 package com.threecrickets.jvm.json;
 
+/**
+ * Transforms objects.
+ * <p>
+ * Used by the {@link JsonDecoder} to transform special JSON data to native
+ * objects.
+ * 
+ * @author Tal Liron
+ */
 public interface JsonTransformer
 {
-	public Object transform( Object object );
+	/**
+	 * Transforms the object.
+	 * 
+	 * @param object
+	 *        The object
+	 * @param implementation
+	 *        The implementation
+	 * @return The transformed object, or null if not transformed
+	 */
+	public Object transform( Object object, JsonImplementation implementation );
 }

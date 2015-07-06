@@ -9,18 +9,17 @@
  * at http://threecrickets.com/
  */
 
-package com.threecrickets.jvm.json.nashorn;
+package com.threecrickets.jvm.json.rhino;
 
 import java.io.IOException;
+
+import org.mozilla.javascript.NativeArray;
 
 import com.threecrickets.jvm.json.JsonContext;
 import com.threecrickets.jvm.json.JsonEncoder;
 
-import jdk.nashorn.internal.objects.NativeArray;
-import jdk.nashorn.internal.runtime.arrays.ArrayData;
-
 /**
- * A JSON encoder for Nashorn's {@link NativeArray}.
+ * A JSON encoder for Rhino's {@link NativeArray}.
  * 
  * @author Tal Liron
  */
@@ -37,18 +36,18 @@ public class NativeArrayEncoder implements JsonEncoder
 
 	public void encode( Object object, JsonContext context ) throws IOException
 	{
-		ArrayData data = ( (NativeArray) object ).getArray();
+		NativeArray nativeArray = (NativeArray) object;
 
 		context.out.append( '[' );
 
-		int length = (int) data.length();
+		int length = (int) nativeArray.size();
 		if( length > 0 )
 		{
 			context.newline();
 
 			for( int i = 0; i < length; i++ )
 			{
-				Object value = data.getObject( i );
+				Object value = nativeArray.get( i );
 
 				context.indentNested();
 				context.nest().encode( value );

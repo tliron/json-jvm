@@ -19,6 +19,15 @@ import com.threecrickets.jvm.json.JsonEncoder;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import jdk.nashorn.internal.runtime.Context;
 
+/**
+ * A JSON encoder for Nashorn's native {@link ScriptObjectMirror}.
+ * <p>
+ * In some cases, the mirror can be unwrapped, in which case this encoder will
+ * delegate to the encoder for that wrapped object. If it cannot be unwrapped,
+ * it will encode as either a JSON object or JSON array as appropriate.
+ * 
+ * @author Tal Liron
+ */
 public class ScriptObjectMirrorEncoder implements JsonEncoder
 {
 	//

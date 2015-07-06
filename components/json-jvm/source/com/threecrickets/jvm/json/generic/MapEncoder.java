@@ -9,16 +9,21 @@
  * at http://threecrickets.com/
  */
 
-package com.threecrickets.jvm.json.java;
+package com.threecrickets.jvm.json.generic;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import com.threecrickets.jvm.json.JsonContext;
 import com.threecrickets.jvm.json.JsonEncoder;
 
-public class CollectionEncoder implements JsonEncoder
+/**
+ * A JSON encoder for {@link Map} implementations.
+ * 
+ * @author Tal Liron
+ */
+public class MapEncoder implements JsonEncoder
 {
 	//
 	// JsonEncoder
@@ -26,26 +31,28 @@ public class CollectionEncoder implements JsonEncoder
 
 	public boolean canEncode( Object object, JsonContext context )
 	{
-		return object instanceof Collection;
+		return object instanceof Map;
 	}
 
 	public void encode( Object object, JsonContext context ) throws IOException
 	{
 		@SuppressWarnings("unchecked")
-		Collection<Object> collection = (Collection<Object>) object;
+		Map<String, Object> map = (Map<String, Object>) object;
 
-		context.out.append( '[' );
+		context.out.append( '{' );
 
-		if( !collection.isEmpty() )
+		if( !map.isEmpty() )
 		{
 			context.newline();
 
-			for( Iterator<Object> i = collection.iterator(); i.hasNext(); )
+			for( Iterator<Map.Entry<String, Object>> i = map.entrySet().iterator(); i.hasNext(); )
 			{
-				Object value = i.next();
+				Map.Entry<String, Object> entry = i.next();
 
 				context.indentNested();
-				context.nest().encode( value );
+				context.quoted( entry.getKey() );
+				context.colon();
+				context.nest().encode( entry.getValue() );
 
 				if( i.hasNext() )
 					context.comma();
@@ -55,6 +62,6 @@ public class CollectionEncoder implements JsonEncoder
 			context.indent();
 		}
 
-		context.out.append( ']' );
+		context.out.append( '}' );
 	}
 }

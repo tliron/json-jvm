@@ -9,22 +9,21 @@
  * at http://threecrickets.com/
  */
 
-package com.threecrickets.jvm.json.nashorn;
+package com.threecrickets.jvm.json.rhino;
 
 import java.io.IOException;
 
+import org.mozilla.javascript.Scriptable;
+
 import com.threecrickets.jvm.json.JsonContext;
 import com.threecrickets.jvm.json.JsonEncoder;
-import com.threecrickets.jvm.json.util.JsonUtil;
-
-import jdk.nashorn.internal.objects.NativeNumber;
 
 /**
- * A JSON encoder for Nashorn's {@link NativeNumber}.
+ * A JSON encoder for Rhino's NativeBoolean (the class is private in Rhino).
  * 
  * @author Tal Liron
  */
-public class NativeNumberEncoder implements JsonEncoder
+public class NativeBooleanEncoder implements JsonEncoder
 {
 	//
 	// JsonEncoder
@@ -32,11 +31,13 @@ public class NativeNumberEncoder implements JsonEncoder
 
 	public boolean canEncode( Object object, JsonContext context )
 	{
-		return object instanceof NativeNumber;
+		return ( object instanceof Scriptable ) && ( (Scriptable) object ).getClassName().equals( "Boolean" );
 	}
 
 	public void encode( Object object, JsonContext context ) throws IOException
 	{
-		context.out.append( JsonUtil.number( ( (NativeNumber) object ).getValue() ) );
+		Scriptable nativeBoolean = (Scriptable) object;
+		Boolean bool = (Boolean) nativeBoolean.getDefaultValue( Boolean.class );
+		context.out.append( bool.toString() );
 	}
 }

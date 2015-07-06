@@ -9,21 +9,24 @@
  * at http://threecrickets.com/
  */
 
-package com.threecrickets.jvm.json.java;
+package com.threecrickets.jvm.json.generic;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.threecrickets.jvm.json.JsonContext;
+import com.threecrickets.jvm.json.BaseJsonImplementation;
 import com.threecrickets.jvm.json.JsonEncoder;
-import com.threecrickets.jvm.json.JsonImplementation;
-import com.threecrickets.jvm.json.JsonTransformer;
 
-public class JavaJsonImplementation implements JsonImplementation
+/**
+ * A JSON implementation using standard JVM types, specifically
+ * {@link LinkedHashMap} for JSON objects and {@link ArrayList} for JSON arrays.
+ * 
+ * @author Tal Liron
+ */
+public class GenericJsonImplementation extends BaseJsonImplementation
 {
 	//
 	// Static operations
@@ -50,32 +53,7 @@ public class JavaJsonImplementation implements JsonImplementation
 
 	public String getName()
 	{
-		return "Java";
-	}
-
-	public int getPriority()
-	{
-		return 0;
-	}
-
-	public JsonContext createContext( Appendable out, boolean expand, boolean allowCode, int depth )
-	{
-		return new JsonContext( this, out, expand, allowCode, depth );
-	}
-
-	public Collection<JsonEncoder> getEncoders()
-	{
-		return Collections.unmodifiableCollection( encoders );
-	}
-
-	public JsonEncoder getFallbackEncoder()
-	{
-		return fallbackEncoder;
-	}
-
-	public Collection<JsonTransformer> getTransformers()
-	{
-		return Collections.unmodifiableCollection( transformers );
+		return null;
 	}
 
 	public Object createObject()
@@ -123,16 +101,4 @@ public class JavaJsonImplementation implements JsonImplementation
 	{
 		return new Long( value );
 	}
-
-	// //////////////////////////////////////////////////////////////////////////
-	// Protected
-
-	protected final ArrayList<JsonEncoder> encoders = new ArrayList<JsonEncoder>();
-
-	protected final ArrayList<JsonTransformer> transformers = new ArrayList<JsonTransformer>();
-
-	// //////////////////////////////////////////////////////////////////////////
-	// Private
-
-	private final JsonEncoder fallbackEncoder = new NullEncoder();
 }

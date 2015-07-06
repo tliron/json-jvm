@@ -9,14 +9,21 @@
  * at http://threecrickets.com/
  */
 
-package com.threecrickets.jvm.json.java;
+package com.threecrickets.jvm.json.rhino;
 
 import java.io.IOException;
+
+import org.mozilla.javascript.Scriptable;
 
 import com.threecrickets.jvm.json.JsonContext;
 import com.threecrickets.jvm.json.JsonEncoder;
 
-public class NullEncoder implements JsonEncoder
+/**
+ * A JSON encoder for Rhino's NativeString (the class is private in Rhino).
+ * 
+ * @author Tal Liron
+ */
+public class NativeStringEncoder implements JsonEncoder
 {
 	//
 	// JsonEncoder
@@ -24,11 +31,11 @@ public class NullEncoder implements JsonEncoder
 
 	public boolean canEncode( Object object, JsonContext context )
 	{
-		return object == null;
+		return ( object instanceof Scriptable ) && ( (Scriptable) object ).getClassName().equals( "String" );
 	}
 
 	public void encode( Object object, JsonContext context ) throws IOException
 	{
-		context.out.append( "null" );
+		context.quoted( object.toString() );
 	}
 }

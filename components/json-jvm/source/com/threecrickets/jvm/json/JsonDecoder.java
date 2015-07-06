@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Reads JSON text and converts it to objects.
+ * Decoded JSON text to objects.
  */
 public class JsonDecoder
 {
@@ -536,7 +536,7 @@ public class JsonDecoder
 		{
 			for( JsonTransformer transformer : implementation.getTransformers() )
 			{
-				Object r = transformer.transform( object );
+				Object r = transformer.transform( object, implementation );
 				if( r != null )
 					return r;
 			}

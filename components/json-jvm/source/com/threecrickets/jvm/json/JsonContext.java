@@ -15,6 +15,15 @@ import java.io.IOException;
 
 import com.threecrickets.jvm.json.util.JsonUtil;
 
+/**
+ * Stores information used for encoding JSON, and provides related utilities.
+ * <p>
+ * Note that implementations may extend this class in order to store additional
+ * information. They may return their custom subclass in
+ * {@link JsonImplementation#createContext(Appendable, boolean, boolean, int)}.
+ * 
+ * @author Tal Liron
+ */
 public class JsonContext
 {
 	//
