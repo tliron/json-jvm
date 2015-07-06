@@ -20,6 +20,10 @@ import jdk.nashorn.internal.runtime.Context;
 /**
  * Transformer for a Nashorn's native {@link ScriptObjectMirror}. Unwraps and
  * delegates to the transformer for that wrapped object.
+ * <p>
+ * ScriptObjectMirrors should not normally result from JSON decoding, because we
+ * construct our ScriptObjects directly, however the transformer is provided for
+ * the sake of completion.
  * 
  * @author Tal Liron
  */

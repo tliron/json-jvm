@@ -33,6 +33,8 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.threecrickets.jvm.json.util.JsonUtil;
+
 /**
  * Decoded JSON text to objects.
  */
@@ -503,7 +505,7 @@ public class JsonDecoder
 			try
 			{
 				if( s.indexOf( '.' ) > -1 || s.indexOf( 'e' ) > -1 || s.indexOf( 'E' ) > -1 )
-					return implementation.createDouble( Double.valueOf( s ) );
+					return implementation.createDouble( JsonUtil.stringToNumber( s ) );
 				else
 				{
 					Long myLong = new Long( s );

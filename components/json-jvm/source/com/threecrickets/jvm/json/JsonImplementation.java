@@ -15,7 +15,7 @@ import java.io.Reader;
 import java.util.Collection;
 
 /**
- * Implements JSON conversation for a specific environment.
+ * Implements JSON conversion for a specific environment.
  * 
  * @author Tal Liron
  * @see Json

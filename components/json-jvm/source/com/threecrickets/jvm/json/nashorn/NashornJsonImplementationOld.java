@@ -205,13 +205,13 @@ public class NashornJsonImplementationOld implements JsonImplementationOld
 		else if( ( object instanceof String ) || ( object instanceof NativeString ) || ( object instanceof ConsString ) )
 		{
 			s.append( '\"' );
-			s.append( JsonUtil.escape( object.toString() ) );
+			s.append( JsonUtil.escapeCharSequence( object.toString() ) );
 			s.append( '\"' );
 		}
 		else if( object instanceof ScriptFunction )
 		{
 			s.append( '\"' );
-			s.append( JsonUtil.escape( ( (ScriptFunction) object ).toSource() ) );
+			s.append( JsonUtil.escapeCharSequence( ( (ScriptFunction) object ).toSource() ) );
 			s.append( '\"' );
 		}
 		else if( object instanceof ScriptObject )
@@ -221,7 +221,7 @@ public class NashornJsonImplementationOld implements JsonImplementationOld
 		else
 		{
 			s.append( '\"' );
-			s.append( JsonUtil.escape( object.toString() ) );
+			s.append( JsonUtil.escapeCharSequence( object.toString() ) );
 			s.append( '\"' );
 		}
 	}
@@ -282,7 +282,7 @@ public class NashornJsonImplementationOld implements JsonImplementationOld
 					indent( s, depth + 1 );
 
 				s.append( '\"' );
-				s.append( JsonUtil.escape( key ) );
+				s.append( JsonUtil.escapeCharSequence( key ) );
 				s.append( "\":" );
 
 				if( depth > -1 )
@@ -365,7 +365,7 @@ public class NashornJsonImplementationOld implements JsonImplementationOld
 					indent( s, depth + 1 );
 
 				s.append( '\"' );
-				s.append( JsonUtil.escape( key ) );
+				s.append( JsonUtil.escapeCharSequence( key ) );
 				s.append( "\":" );
 
 				if( depth > -1 )

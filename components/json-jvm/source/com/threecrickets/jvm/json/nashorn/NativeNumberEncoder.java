@@ -37,6 +37,6 @@ public class NativeNumberEncoder implements JsonEncoder
 
 	public void encode( Object object, JsonContext context ) throws IOException
 	{
-		context.out.append( JsonUtil.number( ( (NativeNumber) object ).getValue() ) );
+		context.out.append( JsonUtil.numberToString( ( (NativeNumber) object ).getValue() ) );
 	}
 }

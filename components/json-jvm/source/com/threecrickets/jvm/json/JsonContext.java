@@ -150,7 +150,7 @@ public class JsonContext
 	public void quoted( CharSequence string ) throws IOException
 	{
 		out.append( '\"' );
-		out.append( JsonUtil.escape( string ) );
+		out.append( JsonUtil.escapeCharSequence( string ) );
 		out.append( '\"' );
 	}
 }

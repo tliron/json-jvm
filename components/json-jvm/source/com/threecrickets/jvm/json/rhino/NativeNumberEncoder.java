@@ -39,6 +39,6 @@ public class NativeNumberEncoder implements JsonEncoder
 	{
 		Scriptable nativeNumber = (Scriptable) object;
 		Double number = (Double) nativeNumber.getDefaultValue( Double.class );
-		context.out.append( JsonUtil.number( number ) );
+		context.out.append( JsonUtil.numberToString( number ) );
 	}
 }

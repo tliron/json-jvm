@@ -35,6 +35,6 @@ public class NumberEncoder implements JsonEncoder
 
 	public void encode( Object object, JsonContext context ) throws IOException
 	{
-		context.out.append( JsonUtil.number( (Number) object ) );
+		context.out.append( JsonUtil.numberToString( (Number) object ) );
 	}
 }

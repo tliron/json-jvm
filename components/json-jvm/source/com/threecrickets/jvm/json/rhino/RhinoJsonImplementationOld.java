@@ -212,7 +212,7 @@ public class RhinoJsonImplementationOld implements JsonImplementationOld
 				// Unpack NativeString (private class) or ConsString
 
 				s.append( '\"' );
-				s.append( JsonUtil.escape( scriptableObject.toString() ) );
+				s.append( JsonUtil.escapeCharSequence( scriptableObject.toString() ) );
 				s.append( '\"' );
 			}
 			else if( className.equals( "Function" ) )
@@ -220,7 +220,7 @@ public class RhinoJsonImplementationOld implements JsonImplementationOld
 				// Trying to encode functions can result in stack overflows...
 
 				s.append( '\"' );
-				s.append( JsonUtil.escape( scriptableObject.toString() ) );
+				s.append( JsonUtil.escapeCharSequence( scriptableObject.toString() ) );
 				s.append( '\"' );
 			}
 			else
@@ -229,7 +229,7 @@ public class RhinoJsonImplementationOld implements JsonImplementationOld
 		else
 		{
 			s.append( '\"' );
-			s.append( JsonUtil.escape( object.toString() ) );
+			s.append( JsonUtil.escapeCharSequence( object.toString() ) );
 			s.append( '\"' );
 		}
 	}
@@ -290,7 +290,7 @@ public class RhinoJsonImplementationOld implements JsonImplementationOld
 					indent( s, depth + 1 );
 
 				s.append( '\"' );
-				s.append( JsonUtil.escape( key ) );
+				s.append( JsonUtil.escapeCharSequence( key ) );
 				s.append( "\":" );
 
 				if( depth > -1 )
@@ -372,7 +372,7 @@ public class RhinoJsonImplementationOld implements JsonImplementationOld
 					indent( s, depth + 1 );
 
 				s.append( '\"' );
-				s.append( JsonUtil.escape( key ) );
+				s.append( JsonUtil.escapeCharSequence( key ) );
 				s.append( "\":" );
 
 				if( depth > -1 )

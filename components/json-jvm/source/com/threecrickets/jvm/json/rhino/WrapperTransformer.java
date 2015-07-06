@@ -16,12 +16,13 @@ import org.mozilla.javascript.Wrapper;
 import com.threecrickets.jvm.json.JsonImplementation;
 import com.threecrickets.jvm.json.JsonTransformer;
 
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
-import jdk.nashorn.internal.runtime.Context;
-
 /**
  * Transformer for a Rhino's {@link Wrapper}. Unwraps and delegates to the
  * transformer for that wrapped object.
+ * <p>
+ * Wrappers should not normally result from JSON decoding, because we construct
+ * our ScriptableObjects directly, however the transformer is provided for the
+ * sake of completion.
  * 
  * @author Tal Liron
  */
@@ -37,15 +38,12 @@ public class WrapperTransformer implements JsonTransformer
 		{
 			Wrapper wrapper = (Wrapper) object;
 
-			Object wrapped = ScriptObjectMirror.unwrap( wrapper, Context.getGlobal() );
-			if( !( wrapped instanceof ScriptObjectMirror ) )
+			Object wrapped = wrapper.unwrap();
+			for( JsonTransformer transformer : implementation.getTransformers() )
 			{
-				for( JsonTransformer transformer : implementation.getTransformers() )
-				{
-					Object r = transformer.transform( wrapped, implementation );
-					if( r != null )
-						return r;
-				}
+				Object r = transformer.transform( wrapped, implementation );
+				if( r != null )
+					return r;
 			}
 		}
 

@@ -19,7 +19,7 @@ import java.util.Collections;
 import com.threecrickets.jvm.json.generic.NullEncoder;
 
 /**
- * An base class for JSON implementations with common functionality.
+ * A convenient base class for JSON implementations with common functionality.
  * <p>
  * Note that you do <i>not</i> have to extend this class for your
  * implementation, you just need to implement {@link JsonImplementation}.
