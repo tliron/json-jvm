@@ -67,3 +67,11 @@ You do *not* need Maven to build JSON JVM, however you can deploy your build to
 a Maven repository using the "deploy-maven" Ant target. To enable this, you must
 install [Maven] (http://maven.apache.org/) and configure its path in
 "private.properties".
+
+
+Still Having Trouble?
+---------------------
+
+Join the [Prudence Community]
+(http://groups.google.com/group/prudence-community), and tell us where you're
+stuck! We're very happy to help newcomers get up and running.
