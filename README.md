@@ -7,10 +7,10 @@ support JSON on non-Java languages running on the JVM.
 
 It's extensible in two ways:
 
-* Easy to add support for custom types, for example native dict and list
-  implementations. This is efficient because it means you always work directly
-  with your language's native types, without the extra step of having to
-  translate through java.util.HashMap, java.util.ArrayList.
+* Easy to add support for custom types, such as native dict, list, string,
+  number, and other implementations. This is efficient because it means you
+  always work directly with your language's native types, without the extra step
+  of having to translate through java.util.HashMap, java.util.ArrayList, etc.
 
 * Easy to add support for extended JSON formats, such as [MongoDB's]
   (http://docs.mongodb.org/manual/reference/mongodb-extended-json/). For an
