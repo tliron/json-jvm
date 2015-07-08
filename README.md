@@ -25,6 +25,20 @@ Currently the project supports standard Java types, and JavaScript via both the 
 (http://openjdk.java.net/projects/nashorn/) and [Rhino]
 (https://github.com/mozilla/rhino) engines.
 
+[![Download](http://threecrickets.com/media/download.png "Download")](http://repository.threecrickets.com/maven/com/threecrickets/jvm/json-jvm/)
+
+Maven:
+
+    <repository>
+        <id>threecrickets</id>
+        <name>Three Crickets Repository</name>
+        <url>http://repository.threecrickets.com/maven/</url>
+    </repository>
+    <dependency>
+        <groupId>com.threecrickets.jvm<</groupId>
+        <artifactId>json-jvm</artifactId>
+    </dependency>
+
 
 Building JSON JVM
 -----------------
