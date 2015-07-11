@@ -18,6 +18,7 @@ import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
 
@@ -260,8 +261,18 @@ public class Json
 	static
 	{
 		ServiceLoader<JsonImplementation> implementationLoader = ServiceLoader.load( JsonImplementation.class, Json.class.getClassLoader() );
-		for( JsonImplementation implementation : implementationLoader )
+		for( Iterator<JsonImplementation> i = implementationLoader.iterator(); i.hasNext(); )
 		{
+			JsonImplementation implementation;
+			try
+			{
+				implementation = i.next();
+			}
+			catch( Throwable x )
+			{
+				// Probably a ClassNotFoundException
+				continue;
+			}
 			JsonImplementation existing = implementations.get( implementation.getName() );
 			if( ( existing == null ) || ( implementation.getPriority() > existing.getPriority() ) )
 			{
