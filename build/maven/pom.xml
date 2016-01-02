@@ -10,7 +10,7 @@
 
 	<name>JSON JVM</name>
 	<description>High-performance conversion to/from JSON for the JVM language engines.</description>
-	<url>http://code.google.com/p/json-jvm/</url>
+	<url>hhttps://github.com/tliron/json-jvm</url>
 	<inceptionYear>2009</inceptionYear>
 
 	<scm>
