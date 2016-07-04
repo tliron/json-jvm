@@ -220,7 +220,7 @@ public class Json
 	}
 
 	/**
-	 * Creates a JSON decoder that decoded into implementation-specific objects.
+	 * Creates a JSON decoder that decodes into implementation-specific objects.
 	 * 
 	 * @param reader
 	 *        The reader
