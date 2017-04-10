@@ -12,18 +12,16 @@ It's extensible in two ways:
   always work directly with your language's native types, without the extra step
   of having to translate through java.util.HashMap, java.util.ArrayList, etc.
 
-* Easy to add support for extended JSON formats, such as [MongoDB's]
-  (http://docs.mongodb.org/manual/reference/mongodb-extended-json/). For an
-  implementation based on this library, see [MongoDB JVM]
-  (https://github.com/tliron/mongodb-jvm).
+* Easy to add support for extended JSON formats, such as
+  [MongoDB's](http://docs.mongodb.org/manual/reference/mongodb-extended-json/). For an
+  implementation based on this library, see [MongoDB JVM](https://github.com/tliron/mongodb-jvm).
 
 JSON JVM is very lightweight and straightforward by design. If you need a more
-robust solution with many more features, see [Jackson]
-(https://github.com/FasterXML/jackson).
+robust solution with many more features, see [Jackson](https://github.com/FasterXML/jackson).
 
-Currently the project supports standard Java types, and JavaScript via both the [Nashorn]
-(http://openjdk.java.net/projects/nashorn/) and [Rhino]
-(https://github.com/mozilla/rhino) engines.
+Currently the project supports standard Java types, and JavaScript via both the
+[Nashorn](http://openjdk.java.net/projects/nashorn/) and [Rhino](https://github.com/mozilla/rhino)
+engines.
 
 [![Download](http://threecrickets.com/media/download.png "Download")](http://repository.threecrickets.com/maven/com/threecrickets/jvm/json-jvm/)
 
@@ -43,7 +41,7 @@ Maven:
 Building JSON JVM
 -----------------
 
-All you need to build JSON JVM is [Ant] (http://ant.apache.org/).
+All you need to build JSON JVM is [Ant](http://ant.apache.org/).
 
 Then, simply change to the "/build/" directory and run "ant".
 
@@ -79,13 +77,12 @@ Deploying to Maven
 
 You do *not* need Maven to build JSON JVM, however you can deploy your build to
 a Maven repository using the "deploy-maven" Ant target. To enable this, you must
-install [Maven] (http://maven.apache.org/) and configure its path in
+install [Maven](http://maven.apache.org/) and configure its path in
 "private.properties".
 
 
 Still Having Trouble?
 ---------------------
 
-Join the [Prudence Community]
-(http://groups.google.com/group/prudence-community), and tell us where you're
-stuck! We're very happy to help newcomers get up and running.
+Join the [Prudence Community](http://groups.google.com/group/prudence-community), and tell us where
+you're stuck! We're very happy to help newcomers get up and running.
